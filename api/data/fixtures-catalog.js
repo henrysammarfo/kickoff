@@ -1,25 +1,6 @@
-/** WC26 fixture catalog — offline fallback; live stats from GET /api/matches/live */
+/** WC26 fixture catalog — shared between API live-data and frontend fixtures.ts */
 
-export type Fixture = {
-  id: string;
-  home: string;
-  away: string;
-  homeFlag: string;
-  awayFlag: string;
-  stage: string;
-  kickoff: string;
-  venue: string;
-  status: "live" | "upcoming";
-  score: string;
-  minute: string;
-  /** Default possession / shots for live analysis form */
-  homePossession: number;
-  homeShots: number;
-  awayShots: number;
-  recentEvents?: string[];
-};
-
-export const FIXTURES: Fixture[] = [
+export const FIXTURES_CATALOG = [
   {
     id: "can-mar",
     home: "Canada",
@@ -69,6 +50,7 @@ export const FIXTURES: Fixture[] = [
     homePossession: 50,
     homeShots: 0,
     awayShots: 0,
+    recentEvents: [],
   },
   {
     id: "arg-ger",
@@ -85,6 +67,7 @@ export const FIXTURES: Fixture[] = [
     homePossession: 50,
     homeShots: 0,
     awayShots: 0,
+    recentEvents: [],
   },
   {
     id: "esp-ned",
@@ -101,6 +84,7 @@ export const FIXTURES: Fixture[] = [
     homePossession: 50,
     homeShots: 0,
     awayShots: 0,
+    recentEvents: [],
   },
   {
     id: "por-usa",
@@ -117,9 +101,14 @@ export const FIXTURES: Fixture[] = [
     homePossession: 50,
     homeShots: 0,
     awayShots: 0,
+    recentEvents: [],
   },
 ];
 
-export function getFixture(id: string) {
-  return FIXTURES.find((f) => f.id === id) ?? FIXTURES[0];
+export function getCatalogFixture(id) {
+  return FIXTURES_CATALOG.find((f) => f.id === id) ?? FIXTURES_CATALOG[0];
+}
+
+export function matchRoomKey(home, away, stage = "R16") {
+  return `${home}-${away}-${stage}`;
 }

@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
+import { ApiBanner } from "@/components/ApiBanner";
 import { FIXTURES } from "@/lib/fixtures";
+import { useLiveMatches } from "@/hooks/use-kickoff";
 import { Radio, Users, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/matches")({
@@ -23,14 +25,23 @@ export const Route = createFileRoute("/matches")({
 });
 
 function Matches() {
+  const { data: live } = useLiveMatches();
+  const matches = live?.matches ?? FIXTURES;
+
   return (
     <PageShell
       eyebrow="// fixtures · wc26"
       title="Every match. Every room."
       lede="Pick a fixture, join a peer-to-peer room, tap into live on-device AI reads with the rest of the world."
     >
+      <ApiBanner />
+      {live?.source && live.source !== "fixtures" && (
+        <p className="mb-6 font-mono text-[10px] uppercase tracking-widest text-[#C6FF3D]">
+          Live scores via {live.source} · refreshes every 60s
+        </p>
+      )}
       <div className="grid gap-px overflow-hidden rounded-2xl bg-white/10">
-        {FIXTURES.map((m) => (
+        {matches.map((m) => (
           <Link
             key={m.id}
             to="/matches/$matchId"

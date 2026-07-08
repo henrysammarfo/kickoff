@@ -78,6 +78,28 @@ export type Pool = {
   entries: unknown[];
   status: string;
   createdAt: number;
+  winner?: unknown;
+};
+
+export type LiveMatch = {
+  id: string;
+  home: string;
+  away: string;
+  homeFlag: string;
+  awayFlag: string;
+  stage: string;
+  kickoff: string;
+  venue: string;
+  status: "live" | "upcoming" | "finished";
+  score: string;
+  minute: string;
+  homePossession: number;
+  homeShots: number;
+  awayShots: number;
+  recentEvents?: string[];
+  liveSource?: string;
+  roomKey?: string;
+  updatedAt?: number;
 };
 
 export type P2PMessage = {
@@ -179,6 +201,44 @@ export const kickoffApi = {
       method: "POST",
       body: JSON.stringify({ prediction, fanWalletAddress, txHash }),
     }),
+
+  settlePool: (
+    poolId: string,
+    actualResult: { homeGoals: number; awayGoals: number },
+  ) =>
+    request<Pool>(`/api/pools/${poolId}/settle`, {
+      method: "POST",
+      body: JSON.stringify({ actualResult }),
+    }),
+
+  liveMatchesStatus: () =>
+    request<{
+      tinyfishConfigured: boolean;
+      cacheAgeMs: number | null;
+      lastSource: string;
+      matchCount: number;
+    }>("/api/matches/status"),
+
+  liveMatches: () =>
+    request<{
+      matches: LiveMatch[];
+      source: string;
+      fetchedAt: number;
+    }>("/api/matches/live"),
+
+  liveMatch: (id: string) =>
+    request<{
+      match: LiveMatch;
+      source: string;
+      fetchedAt: number;
+    }>(`/api/matches/live/${encodeURIComponent(id)}`),
+
+  refreshLiveMatches: () =>
+    request<{
+      refreshed: boolean;
+      source: string;
+      matchCount: number;
+    }>("/api/matches/refresh", { method: "POST" }),
 };
 
 export function matchRoomKey(home: string, away: string, stage = "R16") {

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "smoke": "node ../scripts/smoke-test.js"
+    "smoke": "node ../scripts/smoke-test.js",
+    "stress": "node ../scripts/stress-test.js"
   },
   "dependencies": {
     "@qvac/sdk": "^0.14.1",

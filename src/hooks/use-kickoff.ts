@@ -137,3 +137,56 @@ export function useJoinPool() {
     },
   });
 }
+
+export function useSettlePool() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      poolId,
+      actualResult,
+    }: {
+      poolId: string;
+      actualResult: { homeGoals: number; awayGoals: number };
+    }) => kickoffApi.settlePool(poolId, actualResult),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["kickoff", "pools"] });
+    },
+  });
+}
+
+export function useLiveMatches() {
+  return useQuery({
+    queryKey: ["kickoff", "matches", "live"],
+    queryFn: () => kickoffApi.liveMatches(),
+    refetchInterval: 60_000,
+    retry: 1,
+  });
+}
+
+export function useLiveMatch(matchId: string) {
+  return useQuery({
+    queryKey: ["kickoff", "matches", "live", matchId],
+    queryFn: () => kickoffApi.liveMatch(matchId),
+    refetchInterval: 30_000,
+    retry: 1,
+  });
+}
+
+export function useLiveDataStatus() {
+  return useQuery({
+    queryKey: ["kickoff", "matches", "status"],
+    queryFn: () => kickoffApi.liveMatchesStatus(),
+    refetchInterval: 30_000,
+    retry: 1,
+  });
+}
+
+export function useRefreshLiveMatches() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => kickoffApi.refreshLiveMatches(),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["kickoff", "matches"] });
+    },
+  });
+}

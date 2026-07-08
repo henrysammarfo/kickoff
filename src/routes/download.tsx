@@ -19,12 +19,32 @@ function DownloadPage() {
     <PageShell
       eyebrow="// install"
       title="Get KICKOFF."
-      lede="KICKOFF is a Pears app. Install Pear runtime once, then launch KICKOFF from a single URL. No app store gate, no server dependency."
+      lede="KICKOFF is a Pears app for P2P match rooms, plus a local API for on-device QVAC AI and WDK wallets. Install Pear runtime once, run the local backend, then use the web UI or Pear shell."
     >
       <section className="grid gap-4 md:grid-cols-3">
         <PlatformCard icon={Apple} name="macOS" spec="Intel · Apple Silicon" />
         <PlatformCard icon={Monitor} name="Windows" spec="10 / 11 · x64" />
         <PlatformCard icon={Terminal} name="Linux" spec="AppImage · .deb" />
+      </section>
+
+      <section className="mt-16">
+        <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">
+          // how it works today
+        </p>
+        <div className="glass max-w-2xl space-y-3 rounded-2xl p-6 text-sm text-[#A0A0A0]">
+          <p>
+            <strong className="text-white">Marketing site</strong> — deploy the frontend build to Vercel or Cloudflare (no QVAC on server).
+          </p>
+          <p>
+            <strong className="text-white">Full stack</strong> — run <code className="text-white">cd api && npm run dev</code> on your machine for QVAC + WDK + P2P bootstrap.
+          </p>
+          <p>
+            <strong className="text-white">Pear app</strong> — <code className="text-white">cd pears && pear run .</code> for native Hyperswarm rooms (Windows, macOS, Linux).
+          </p>
+          <p>
+            <strong className="text-white">Mobile iOS/Android</strong> — Pear runtime mobile distribution is on the roadmap post-WC26; use the web UI + local API for the hackathon demo.
+          </p>
+        </div>
       </section>
 
       <section className="mt-16">

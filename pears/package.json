@@ -6,7 +6,17 @@
   "pear": {
     "name": "kickoff",
     "main": "app.js",
-    "title": "KICKOFF P2P"
+    "title": "KICKOFF P2P",
+    "description": "Hyperswarm match rooms for KICKOFF — Pears Stack",
+    "gui": {
+      "background": "#000000",
+      "height": 640,
+      "width": 480
+    }
+  },
+  "scripts": {
+    "start": "node app.js",
+    "ui": "node ui.js"
   },
   "dependencies": {
     "hyperswarm": "^4.17.0",

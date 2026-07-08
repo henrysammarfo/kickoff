@@ -15,6 +15,9 @@ import {
   useAiStatus,
   useCreatePool,
   useJoinPool,
+  useLiveMatch,
+  useLiveDataStatus,
+  useSettlePool,
 } from "@/hooks/use-kickoff";
 import { Cpu, Users, Trophy, Send, Sparkles, ArrowLeft, Loader2 } from "lucide-react";
 
@@ -33,8 +36,11 @@ export const Route = createFileRoute("/matches/$matchId")({
 
 function MatchRoom() {
   const { matchId } = useParams({ from: "/matches/$matchId" });
-  const m = getFixture(matchId);
-  const roomName = matchRoomKey(m.home, m.away, m.stage);
+  const fallback = getFixture(matchId);
+  const { data: live } = useLiveMatch(matchId);
+  const { data: liveStatus } = useLiveDataStatus();
+  const m = live?.match ?? fallback;
+  const roomName = m.roomKey ?? matchRoomKey(m.home, m.away, m.stage);
 
   const joinRoom = useJoinRoom();
   const { data: messages } = useRoomMessages(roomName, joinRoom.isSuccess);
@@ -46,11 +52,14 @@ function MatchRoom() {
   const { data: pools } = usePools();
   const createPool = useCreatePool();
   const joinPool = useJoinPool();
+  const settlePool = useSettlePool();
 
   const [chatText, setChatText] = useState("");
   const [tipOpen, setTipOpen] = useState(false);
   const [tipAddr, setTipAddr] = useState("");
   const [tipAmt, setTipAmt] = useState("0.5");
+  const [settleHg, setSettleHg] = useState("1");
+  const [settleAg, setSettleAg] = useState("1");
 
   useEffect(() => {
     joinRoom.mutate(roomName);
@@ -58,6 +67,7 @@ function MatchRoom() {
 
   const matchPools = pools?.filter((p) => p.matchName.includes(m.home)) ?? [];
   const peers = joinRoom.data?.peers ?? 0;
+  const dataSource = live?.source ?? "fixtures";
 
   const runAnalysis = () => {
     const [homeGoals, awayGoals] = m.score.split("-").map((s) => s.trim());
@@ -69,6 +79,7 @@ function MatchRoom() {
       homePossession: m.homePossession,
       homeShots: m.homeShots,
       awayShots: m.awayShots,
+      recentEvents: m.recentEvents ?? [],
     });
   };
 
@@ -86,6 +97,11 @@ function MatchRoom() {
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">
             {m.stage} · {m.venue} · {m.kickoff}
+            {liveStatus?.tinyfishConfigured ? (
+              <span className="ml-2 text-[#A0A0A0]">
+                · live data ({dataSource})
+              </span>
+            ) : null}
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-4 md:gap-6">
             <span className="text-5xl md:text-6xl">{m.homeFlag}</span>
@@ -218,6 +234,23 @@ function MatchRoom() {
                 >
                   Join
                 </button>
+                {p.status === "open" && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      settlePool.mutate({
+                        poolId: p.id,
+                        actualResult: {
+                          homeGoals: parseInt(settleHg, 10) || 0,
+                          awayGoals: parseInt(settleAg, 10) || 0,
+                        },
+                      })
+                    }
+                    className="rounded-full border border-[#C6FF3D]/40 px-3 py-1 text-xs text-[#C6FF3D] hover:bg-[#C6FF3D]/10"
+                  >
+                    Settle
+                  </button>
+                )}
               </div>
             ))}
           </div>

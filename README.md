@@ -1,74 +1,112 @@
 # KICKOFF
 
-P2P football intelligence for World Cup 2026 — **Pears (P2P) + QVAC (local AI) + WDK (self-custodial USDt)**.
+P2P football intelligence — **Pears + QVAC + WDK** for World Cup 2026 and beyond.  
+Representing **Ghana 🇬🇭** · [Tether Developers Cup](https://dorahacks.io/hackathon/tether-developers-cup/detail)
 
-## Docs
+## Tracks (all three)
 
-| Document | Description |
-|----------|-------------|
-| [KICKOFF_BUILD_GUIDE.md](./docs/KICKOFF_BUILD_GUIDE.md) | Full build spec (team bible) |
-| [docs/memory/](./docs/memory/) | Verified facts, API keys, gaps, win strategy |
+| Track | Stack | Proof |
+|-------|-------|-------|
+| **Pears** | Hyperswarm P2P | `pears/` + `/api/rooms/*` — no central chat server |
+| **QVAC** | `@qvac/sdk` 0.14.1 | `/api/ai/*` — on-device inference, WiFi-off demo |
+| **WDK** | `@tetherto/wdk` | `/api/wallet/*` — self-custodial Sepolia wallet |
 
-## Quick start
-
-### Frontend (TanStack Start)
-
-```bash
-npm install
-npm run dev          # http://localhost:5173
-```
-
-Point the UI at the local API (optional — defaults to `http://127.0.0.1:3001`):
+## Quick start (judges — under 5 minutes)
 
 ```bash
-echo 'VITE_API_BASE=http://127.0.0.1:3001' >> .env
-```
-
-### Backend (QVAC + Hyperswarm + WDK)
-
-```bash
+git clone https://github.com/henrysammarfo/kickoff
+cd kickoff
 cp .env.example .env
-cd api && npm install
-npm run dev          # http://127.0.0.1:3001/api
+# Optional: add TINYFISH_API_KEY for live score ingestion
+
+cd api && npm install && npm run dev &
+cd .. && npm install && npm run dev
 ```
 
-Smoke test (server must be running):
+Verify (API must be running):
 
 ```bash
-npm run api:smoke
+npm run api:smoke    # core stacks
+npm run api:stress   # every endpoint
 ```
 
-### QVAC configuration
+Open http://localhost:5173 → Matches → join a room → **Analyze** (QVAC) → chat (P2P) → tip/pool (WDK).
 
-Local inference uses `@qvac/sdk` with a registry model by default. Optional overrides:
+**First QVAC run** downloads ~773MB model to `~/.qvac/models` (one-time).
 
-```bash
-# OpenAI-compatible local server (e.g. from linestackruntime reference project)
-export QVAC_HTTP_URL=http://127.0.0.1:8080
-
-# Local GGUF file
-export QVAC_MODEL_PATH=/path/to/model.gguf
-```
-
-### Pear P2P app
+### Pear standalone
 
 ```bash
 cd pears && npm install
 KICKOFF_MATCH=France-Paraguay-R16 node app.js
-# Or: pear run .  (with Pear CLI installed)
 ```
 
-## API surface
+## Architecture
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/health` | Subsystem status |
-| `POST /api/ai/analyze` | QVAC local match analysis |
-| `POST /api/rooms/join` | Join Hyperswarm match room |
-| `GET /api/wallet/balance` | WDK self-custodial balance |
-| `POST /api/wallet/tip` | Tip fan in USDt (or ETH demo fallback) |
-| `POST /api/pools/create` | Create prediction pool |
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Frontend (TanStack Start) — marketing + dashboard          │
+│  Deploy: Vercel / Cloudflare / Nitro static                 │
+│  Talks to local API at http://127.0.0.1:3001                │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────┐
+│  Local API (Express :3001)                                  │
+│  ├── /api/matches/*  → TinyFish live ingest (optional)       │
+│  ├── /api/ai/*       → @qvac/sdk LOCAL inference             │
+│  ├── /api/rooms/*    → Hyperswarm P2P bootstrap              │
+│  ├── /api/wallet/*   → @tetherto/wdk                         │
+│  └── /api/pools/*    → prediction pools + WDK settlement     │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────┐
+│  pears/ — Pear CLI app (Hyperswarm rooms)                    │
+└─────────────────────────────────────────────────────────────┘
+```
 
-## Hackathon
+See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) and [docs/ROADMAP.md](./docs/ROADMAP.md).
 
-[Tether Developers Cup](https://dorahacks.io/hackathon/tether-developers-cup/detail) — representing **Ghana 🇬🇭**
+## Live match data (TinyFish — optional)
+
+**TinyFish ingests factual stats from the web. QVAC never calls the cloud for AI.**
+
+```bash
+TINYFISH_API_KEY=your_key   # server-side only — never commit
+```
+
+- `GET /api/matches/live` — merged WC26 catalog + live scores (60s cache)
+- Without key: static fixtures (offline demo still works)
+
+Docs: https://docs.tinyfish.ai
+
+## Download page / mobile / desktop
+
+| What | Status |
+|------|--------|
+| **Marketing site** | Deploy frontend build (`npm run build`) to Vercel/Cloudflare |
+| **Full app (QVAC+WDK+P2P)** | Runs **locally** — API + optional Pear CLI |
+| **iOS / Android** | Roadmap: Pear runtime mobile shell (post-WC26) |
+| **Windows / macOS / Linux** | `pear run .` from `pears/` after installing [Pear CLI](https://docs.pears.com) |
+
+The `/download` page describes the Pear distribution model — not App Store binaries yet.
+
+## Third-party services
+
+| Service | Purpose | Required? |
+|---------|---------|-----------|
+| `@qvac/sdk` | Local AI | Yes |
+| Hyperswarm / Pears | P2P | Yes |
+| `@tetherto/wdk` | Wallet | Yes |
+| TinyFish | Live score ingestion | Optional |
+| Sepolia public RPC | Testnet | Yes (no key) |
+| OpenAI / Venice / Azure | — | **Not used** for match AI |
+
+## Docs
+
+- [KICKOFF_BUILD_GUIDE.md](./docs/KICKOFF_BUILD_GUIDE.md) — team bible
+- [docs/memory/](./docs/memory/) — verified facts, API keys, strategy
+- [docs/SUBMISSION.md](./docs/SUBMISSION.md) — hackathon checklist
+
+## License
+
+MIT — see [LICENSE](./LICENSE)

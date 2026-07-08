@@ -17,6 +17,8 @@ import { createAiRouter } from "./routes/ai.js";
 import { createRoomsRouter } from "./routes/rooms.js";
 import { createWalletRouter } from "./routes/wallet.js";
 import { createPoolsRouter } from "./routes/pools.js";
+import { createMatchesRouter } from "./routes/matches.js";
+import { LiveMatchesService } from "./services/live-matches.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, ".env") });
@@ -45,6 +47,7 @@ app.use(express.json({ limit: "1mb" }));
 
 const ai = new FootballAI();
 const wallet = new KickoffWallet();
+const liveMatches = new LiveMatchesService();
 let tipper = null;
 let poolMgr = null;
 let poolsRouter = null;
@@ -76,11 +79,21 @@ app.get("/api/health", (_req, res) => {
     qvacMode: ai.mode,
     wallet: wallet.isReady(),
     activeRooms: rooms.size,
+    liveData: liveMatches.isLiveDataEnabled(),
+    liveDataStatus: liveMatches.getStatus(),
     teamNation: process.env.TEAM_NATION || "Ghana",
     description:
       "KICKOFF: Local AI + P2P + Self-custodial. All three Tether stacks.",
+    stacks: {
+      qvac: "on-device inference via @qvac/sdk",
+      pears: "Hyperswarm P2P via Pears building blocks",
+      wdk: "self-custodial @tetherto/wdk",
+      liveIngest: "TinyFish web ingestion → local QVAC analysis",
+    },
   });
 });
+
+app.use("/api/matches", createMatchesRouter(liveMatches));
 
 app.use("/api/ai", createAiRouter(ai));
 app.use(
