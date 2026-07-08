@@ -9,38 +9,154 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MerchRouteImport } from './routes/merch'
+import { Route as MatchesRouteImport } from './routes/matches'
+import { Route as ManifestoRouteImport } from './routes/manifesto'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as DownloadRouteImport } from './routes/download'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MatchesMatchIdRouteImport } from './routes/matches.$matchId'
 
+const MerchRoute = MerchRouteImport.update({
+  id: '/merch',
+  path: '/merch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatchesRoute = MatchesRouteImport.update({
+  id: '/matches',
+  path: '/matches',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManifestoRoute = ManifestoRouteImport.update({
+  id: '/manifesto',
+  path: '/manifesto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DownloadRoute = DownloadRouteImport.update({
+  id: '/download',
+  path: '/download',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MatchesMatchIdRoute = MatchesMatchIdRouteImport.update({
+  id: '/$matchId',
+  path: '/$matchId',
+  getParentRoute: () => MatchesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/download': typeof DownloadRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/manifesto': typeof ManifestoRoute
+  '/matches': typeof MatchesRouteWithChildren
+  '/merch': typeof MerchRoute
+  '/matches/$matchId': typeof MatchesMatchIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/download': typeof DownloadRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/manifesto': typeof ManifestoRoute
+  '/matches': typeof MatchesRouteWithChildren
+  '/merch': typeof MerchRoute
+  '/matches/$matchId': typeof MatchesMatchIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/download': typeof DownloadRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/manifesto': typeof ManifestoRoute
+  '/matches': typeof MatchesRouteWithChildren
+  '/merch': typeof MerchRoute
+  '/matches/$matchId': typeof MatchesMatchIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/download'
+    | '/how-it-works'
+    | '/manifesto'
+    | '/matches'
+    | '/merch'
+    | '/matches/$matchId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/download'
+    | '/how-it-works'
+    | '/manifesto'
+    | '/matches'
+    | '/merch'
+    | '/matches/$matchId'
+  id:
+    | '__root__'
+    | '/'
+    | '/download'
+    | '/how-it-works'
+    | '/manifesto'
+    | '/matches'
+    | '/merch'
+    | '/matches/$matchId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DownloadRoute: typeof DownloadRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  ManifestoRoute: typeof ManifestoRoute
+  MatchesRoute: typeof MatchesRouteWithChildren
+  MerchRoute: typeof MerchRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/merch': {
+      id: '/merch'
+      path: '/merch'
+      fullPath: '/merch'
+      preLoaderRoute: typeof MerchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/matches': {
+      id: '/matches'
+      path: '/matches'
+      fullPath: '/matches'
+      preLoaderRoute: typeof MatchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manifesto': {
+      id: '/manifesto'
+      path: '/manifesto'
+      fullPath: '/manifesto'
+      preLoaderRoute: typeof ManifestoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/download': {
+      id: '/download'
+      path: '/download'
+      fullPath: '/download'
+      preLoaderRoute: typeof DownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +164,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/matches/$matchId': {
+      id: '/matches/$matchId'
+      path: '/$matchId'
+      fullPath: '/matches/$matchId'
+      preLoaderRoute: typeof MatchesMatchIdRouteImport
+      parentRoute: typeof MatchesRoute
+    }
   }
 }
 
+interface MatchesRouteChildren {
+  MatchesMatchIdRoute: typeof MatchesMatchIdRoute
+}
+
+const MatchesRouteChildren: MatchesRouteChildren = {
+  MatchesMatchIdRoute: MatchesMatchIdRoute,
+}
+
+const MatchesRouteWithChildren =
+  MatchesRoute._addFileChildren(MatchesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DownloadRoute: DownloadRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  ManifestoRoute: ManifestoRoute,
+  MatchesRoute: MatchesRouteWithChildren,
+  MerchRoute: MerchRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
