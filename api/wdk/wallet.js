@@ -18,7 +18,7 @@ const DEFAULT_PROVIDER =
 
 const USDT_TOKEN_ADDRESS =
   process.env.WDK_USDT_TOKEN_ADDRESS ||
-  "0xaA8E23Fb1079EA71e0a56F48aEAfaFd942E645a6"; // Sepolia test USDT (verify on your network)
+  "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0";
 
 export class KickoffWallet {
   constructor() {
