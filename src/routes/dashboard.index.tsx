@@ -112,7 +112,7 @@ function DashHome() {
           </div>
         </div>
 
-        <div className="glass rounded-2xl p-6">
+        <div className="glass min-w-0 overflow-hidden rounded-2xl p-4 sm:p-6">
           <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">
             Stack status
           </p>
