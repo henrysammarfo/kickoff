@@ -5,7 +5,7 @@
 
 import { KickoffRoom } from "./p2p/room.js";
 
-const matchName = process.env.KICKOFF_MATCH || "Morocco-France-QF";
+const matchName = process.env.KICKOFF_MATCH || "France-Morocco-QF";
 const room = new KickoffRoom(matchName);
 
 room.onMessage((peerId, msg) => {
