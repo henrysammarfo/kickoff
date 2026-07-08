@@ -32,7 +32,7 @@ function DashHome() {
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">
           // overview
         </p>
-        <h1 className="mt-4 font-display text-5xl text-white md:text-6xl">
+        <h1 className="mt-4 font-display text-4xl text-white sm:text-5xl md:text-6xl">
           Good evening.
         </h1>
         <p className="mt-3 text-[#A0A0A0]">
@@ -43,7 +43,7 @@ function DashHome() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         <StatCard
           icon={Wallet}
           label="Wallet · USDt"
@@ -71,8 +71,8 @@ function DashHome() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="glass rounded-2xl p-6 lg:col-span-2">
-          <div className="mb-6 flex items-center justify-between">
+        <div className="glass min-w-0 overflow-hidden rounded-2xl p-4 sm:p-6 lg:col-span-2">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
             <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">
               Live & upcoming
             </p>
@@ -89,18 +89,22 @@ function DashHome() {
                 key={m.id}
                 to="/matches/$matchId"
                 params={{ matchId: m.id }}
-                className="flex items-center justify-between border-b border-white/5 pb-4 last:border-0 hover:opacity-80"
+                className="flex flex-col gap-2 border-b border-white/5 pb-4 last:border-0 hover:opacity-80 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
               >
-                <div className="flex items-center gap-4">
-                  <span className="text-xl">{m.homeFlag}</span>
-                  <span className="text-white">{m.home}</span>
+                <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 sm:gap-x-3">
+                  <span className="text-lg sm:text-xl">{m.homeFlag}</span>
+                  <span className="truncate text-sm text-white sm:text-base">
+                    {m.home}
+                  </span>
                   <span className="font-mono text-xs text-[#A0A0A0]">
                     {m.score}
                   </span>
-                  <span className="text-white">{m.away}</span>
-                  <span className="text-xl">{m.awayFlag}</span>
+                  <span className="truncate text-sm text-white sm:text-base">
+                    {m.away}
+                  </span>
+                  <span className="text-lg sm:text-xl">{m.awayFlag}</span>
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
+                <span className="shrink-0 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
                   {m.status === "live" ? `LIVE ${m.minute}` : m.kickoff}
                 </span>
               </Link>
@@ -140,16 +144,18 @@ function StatCard({
   sub: string;
 }) {
   return (
-    <div className="glass rounded-2xl p-6">
+    <div className="glass min-w-0 overflow-hidden rounded-2xl p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <Icon className="h-4 w-4 text-[#C6FF3D]" strokeWidth={1.75} />
         <ArrowUpRight className="h-3.5 w-3.5 text-[#A0A0A0]" strokeWidth={1.5} />
       </div>
-      <p className="mt-6 font-display text-4xl text-white">{value}</p>
-      <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.25em] text-[#A0A0A0]">
+      <p className="mt-4 truncate font-display text-2xl text-white sm:mt-6 sm:text-3xl md:text-4xl">
+        {value}
+      </p>
+      <p className="mt-1 truncate font-mono text-[9px] uppercase tracking-[0.2em] text-[#A0A0A0] sm:text-[10px] sm:tracking-[0.25em]">
         {label}
       </p>
-      <p className="mt-3 text-xs text-[#A0A0A0]">{sub}</p>
+      <p className="mt-2 truncate text-xs text-[#A0A0A0] sm:mt-3">{sub}</p>
     </div>
   );
 }

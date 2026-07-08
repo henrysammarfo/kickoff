@@ -42,7 +42,7 @@ function DashboardLayout() {
       : "Start API — cd api && npm run dev";
 
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div className="flex min-h-screen overflow-x-hidden bg-black text-white">
       <aside className="hidden w-64 shrink-0 border-r border-white/10 p-6 md:flex md:flex-col">
         <Link to="/">
           <LogoLockup size={22} />
@@ -139,7 +139,7 @@ function DashboardLayout() {
           })}
         </nav>
 
-        <main className="px-4 py-8 sm:px-6 sm:py-10 md:px-10 md:py-14">
+        <main className="min-w-0 overflow-x-hidden px-4 py-8 sm:px-6 sm:py-10 md:px-10 md:py-14">
           <Outlet />
         </main>
       </div>

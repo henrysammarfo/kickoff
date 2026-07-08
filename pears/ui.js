@@ -3,7 +3,7 @@
  */
 import { KickoffRoom } from "./p2p/room.js";
 
-const matchName = process.env.KICKOFF_MATCH || "France-Paraguay-R16";
+const matchName = process.env.KICKOFF_MATCH || "Morocco-France-QF";
 const statusEl = document.getElementById("status");
 const metaEl = document.getElementById("meta");
 const logEl = document.getElementById("log");

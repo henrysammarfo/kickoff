@@ -21,7 +21,7 @@ function RoomsPage() {
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">
           // pears · hyperswarm
         </p>
-        <h1 className="mt-4 font-display text-5xl text-white md:text-6xl">
+        <h1 className="mt-4 font-display text-4xl text-white sm:text-5xl md:text-6xl">
           Rooms
         </h1>
         <p className="mt-3 max-w-xl text-[#A0A0A0]">
@@ -61,13 +61,13 @@ function RoomGrid({
           const roomKey = matchRoomKey(f.home, f.away, f.stage);
           const live = isLiveNow(f);
           return (
-            <div key={f.id} className="glass rounded-2xl p-6">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="font-display text-2xl text-white">
+            <div key={f.id} className="glass min-w-0 overflow-hidden rounded-2xl p-4 sm:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-display text-xl text-white sm:text-2xl">
                     {f.home} vs {f.away}
                   </p>
-                  <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
+                  <p className="mt-2 truncate font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
                     topic:{roomKey}
                   </p>
                 </div>

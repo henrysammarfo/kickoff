@@ -24,7 +24,7 @@ function WalletPage() {
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">
           // wdk · self-custodial
         </p>
-        <h1 className="mt-4 font-display text-5xl text-white md:text-6xl">
+        <h1 className="mt-4 font-display text-4xl text-white sm:text-5xl md:text-6xl">
           Wallet
         </h1>
         <p className="mt-3 max-w-xl text-sm text-[#A0A0A0]">
@@ -43,11 +43,11 @@ function WalletPage() {
       )}
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="glass rounded-2xl p-8 lg:col-span-2">
+        <div className="glass min-w-0 overflow-hidden rounded-2xl p-6 sm:p-8 lg:col-span-2">
           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">
             Balance
           </p>
-          <p className="mt-4 font-display text-7xl text-white">
+          <p className="mt-4 break-all font-display text-4xl text-white sm:text-5xl md:text-7xl">
             {isLoading ? "…" : (wallet?.usdt ?? 0).toFixed(2)}
           </p>
           <p className="mt-2 font-mono text-sm text-[#C6FF3D]">USDt · Tether</p>

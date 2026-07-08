@@ -16,7 +16,7 @@ function AiPage() {
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">
           // qvac · on-device
         </p>
-        <h1 className="mt-4 font-display text-5xl text-white md:text-6xl">
+        <h1 className="mt-4 font-display text-4xl text-white sm:text-5xl md:text-6xl">
           Local AI
         </h1>
         <p className="mt-3 text-[#A0A0A0]">
