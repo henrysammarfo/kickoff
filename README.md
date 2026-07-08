@@ -43,28 +43,22 @@ KICKOFF_MATCH=France-Paraguay-R16 node app.js
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Frontend (TanStack Start) — marketing + dashboard          │
-│  Deploy: Vercel / Cloudflare / Nitro static                 │
-│  Talks to local API at http://127.0.0.1:3001                │
-└───────────────────────────┬─────────────────────────────────┘
-                            │
-┌───────────────────────────▼─────────────────────────────────┐
-│  Local API (Express :3001)                                  │
-│  ├── /api/matches/*  → TinyFish live ingest (optional)       │
-│  ├── /api/ai/*       → @qvac/sdk LOCAL inference             │
-│  ├── /api/rooms/*    → Hyperswarm P2P bootstrap              │
-│  ├── /api/wallet/*   → @tetherto/wdk                         │
-│  └── /api/pools/*    → prediction pools + WDK settlement     │
-└───────────────────────────┬─────────────────────────────────┘
-                            │
-┌───────────────────────────▼─────────────────────────────────┐
-│  pears/ — Pear CLI app (Hyperswarm rooms)                    │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+  FE["Frontend · TanStack Start<br/>Vercel / Cloudflare / local :3002"]
+  API["Local API · Express :3001"]
+  Pear["Pear app · pears/"]
+
+  FE -->|REST| API
+  API --> M["/api/matches → TinyFish (optional)"]
+  API --> A["/api/ai → QVAC local inference"]
+  API --> R["/api/rooms → Hyperswarm P2P bootstrap"]
+  API --> W["/api/wallet → WDK Sepolia wallet"]
+  API --> P["/api/pools → prediction pools + settle"]
+  Pear --> R
 ```
 
-See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) and [docs/ROADMAP.md](./docs/ROADMAP.md).
+See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) (full Mermaid flows) and [docs/ROADMAP.md](./docs/ROADMAP.md).
 
 ## Live match data (TinyFish — optional)
 
