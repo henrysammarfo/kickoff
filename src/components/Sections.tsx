@@ -1,6 +1,7 @@
 import { Cpu, Radio, Wallet, Trophy, WifiOff, Users } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
 import { Link } from "@tanstack/react-router";
+import { useHealth, useLiveMatches, useAiStatus, useWallet } from "@/hooks/use-kickoff";
 
 const Spacer = () => <div className="h-[120px] md:h-[200px]" aria-hidden="true" />;
 
@@ -83,20 +84,42 @@ export function Features() {
   );
 }
 
-const STATS = [
-  { k: "0", label: "servers" },
-  { k: "100%", label: "on-device AI" },
-  { k: "1", label: "currency · USDt" },
-  { k: "48", label: "matches to July 19" },
-];
 
 export function Proof() {
+  const { data: health } = useHealth();
+  const { data: live } = useLiveMatches();
+  const { data: ai } = useAiStatus();
+  const { data: wallet } = useWallet();
+
+  const matchCount = live?.matches?.length ?? 0;
+  const liveCount = live?.matches?.filter((m) => m.status === "live").length ?? 0;
+
+  const stats = [
+    { k: "0", label: "central chat servers" },
+    {
+      k: ai?.ready ? "100%" : "…",
+      label: ai?.ready ? "on-device AI" : "qvac loading",
+    },
+    {
+      k: wallet?.usdt != null ? wallet.usdt.toFixed(0) : "—",
+      label: "USDt in wallet",
+    },
+    {
+      k: String(liveCount > 0 ? liveCount : matchCount),
+      label: liveCount > 0 ? "matches live now" : "wc26 fixtures",
+    },
+  ];
+
   return (
     <section className="relative grid grid-cols-4 gap-6 px-6 md:grid-cols-12 md:px-12">
       <div className="col-span-4 md:col-span-12">
         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">// 04 · proof</p>
+        <p className="mt-3 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
+          Live from API · {health?.status === "ok" ? "connected" : "offline"} ·{" "}
+          {live?.source && live.source !== "fixtures" ? live.source : "catalog"}
+        </p>
         <div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
-          {STATS.map((s) => (
+          {stats.map((s) => (
             <div key={s.label}>
               <p className="font-display text-6xl text-white md:text-7xl">{s.k}</p>
               <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">{s.label}</p>

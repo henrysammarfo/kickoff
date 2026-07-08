@@ -1,14 +1,27 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { useHealth, useLiveMatches } from "@/hooks/use-kickoff";
 
 export function Hero() {
+  const { data: health } = useHealth();
+  const { data: live } = useLiveMatches();
+  const liveCount = live?.matches?.filter((m) => m.status === "live").length ?? 0;
+  const nextLive = live?.matches?.find((m) => m.status === "live");
+
+  const statusLabel =
+    liveCount > 0
+      ? `${liveCount} live · World Cup 2026`
+      : health?.status === "ok"
+        ? `API online · World Cup 2026`
+        : "World Cup 2026";
+
   return (
     <section className="relative grid min-h-screen grid-cols-4 gap-6 px-6 pb-16 pt-32 md:grid-cols-12 md:px-12 md:pb-24">
       <div className="col-span-4 flex items-end md:col-span-8 lg:col-span-7">
         <div>
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.3em] text-[#A0A0A0]">
-            <span className="h-2 w-2 rounded-full bg-[#C6FF3D]" />
-            Live · World Cup 2026
+            <span className={`h-2 w-2 rounded-full ${liveCount > 0 || health?.status === "ok" ? "bg-[#C6FF3D]" : "bg-amber-400"}`} />
+            {statusLabel}
           </div>
           <h1
             className="mt-6 font-display leading-[0.95] tracking-tight text-white"
@@ -21,10 +34,10 @@ export function Hero() {
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <Link
-              to="/download"
+              to="/matches"
               className="group inline-flex items-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-medium text-black transition-all hover:bg-[#C6FF3D]"
             >
-              Get KICKOFF
+              {liveCount > 0 ? "Join a live room" : "Browse matches"}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
             </Link>
             <Link
@@ -39,7 +52,13 @@ export function Hero() {
       <div className="col-span-4 hidden items-end justify-end font-mono text-[10px] uppercase tracking-[0.25em] text-[#A0A0A0] md:col-span-4 lg:col-span-5 lg:flex">
         <div className="text-right">
           <p>N° 001 · KICKOFF</p>
-          <p>MetLife · Jul 19 · 2026</p>
+          {nextLive ? (
+            <p>
+              {nextLive.home} {nextLive.score} {nextLive.away} · {nextLive.minute}
+            </p>
+          ) : (
+            <p>MetLife · Jul 19 · 2026</p>
+          )}
         </div>
       </div>
     </section>

@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { ComponentType } from "react";
-import { FIXTURES } from "@/lib/fixtures";
 import {
   useWallet,
   useHealth,
   usePools,
   useAiStatus,
+  useLiveMatches,
 } from "@/hooks/use-kickoff";
 import { ArrowUpRight, TrendingUp, Wallet, Radio, Trophy } from "lucide-react";
 
@@ -18,8 +18,10 @@ function DashHome() {
   const { data: health } = useHealth();
   const { data: pools } = usePools();
   const { data: ai } = useAiStatus();
+  const { data: live } = useLiveMatches();
 
-  const liveCount = FIXTURES.filter((f) => f.status === "live").length;
+  const matches = live?.matches ?? [];
+  const liveCount = matches.filter((f) => f.status === "live").length;
   const openPools = pools?.filter((p) => p.status === "open").length ?? 0;
 
   return (
@@ -80,7 +82,7 @@ function DashHome() {
             </Link>
           </div>
           <div className="space-y-4">
-            {FIXTURES.slice(0, 4).map((m) => (
+            {matches.slice(0, 4).map((m) => (
               <Link
                 key={m.id}
                 to="/matches/$matchId"

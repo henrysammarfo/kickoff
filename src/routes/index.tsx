@@ -3,6 +3,10 @@ import { ScrollytellingCanvas } from "@/components/ScrollytellingCanvas";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Hero } from "@/components/Hero";
 import {
+  LandingLiveMatches,
+  LandingLiveStatus,
+} from "@/components/LandingLive";
+import {
   WhatItIs, HowItWorks, Features, Proof, FinalCTA, SiteFooter, Spacer,
 } from "@/components/Sections";
 
@@ -16,7 +20,10 @@ function Landing() {
       <ScrollytellingCanvas />
       <div className="relative z-10">
         <SiteHeader />
+        <LandingLiveStatus />
         <Hero />
+        <Spacer />
+        <LandingLiveMatches />
         <Spacer />
         <WhatItIs />
         <Spacer />
