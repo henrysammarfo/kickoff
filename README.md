@@ -37,6 +37,96 @@ Open **http://localhost:3002** → Matches → join a QF room → **Analyze** (Q
 
 **First QVAC run** downloads ~773MB model to `~/.qvac/models` (one-time).
 
+## Proofs (copy-paste while API is running)
+
+Judges can verify all three stacks from the terminal — no frontend required.
+
+### QVAC — on-device inference
+
+Model loads once at API boot (`[QVAC] Model loaded locally`). Confirm readiness:
+
+```bash
+curl -s http://127.0.0.1:3001/api/ai/status | jq
+```
+
+Expected (key fields):
+
+```json
+{
+  "ready": true,
+  "mode": "qvac-registry",
+  "model": "LLAMA_3_2_1B_INST_Q4_0",
+  "runningLocally": true,
+  "noCloudDependency": true
+}
+```
+
+Run a live analysis (France vs Morocco QF stats):
+
+```bash
+curl -s -X POST http://127.0.0.1:3001/api/ai/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "homeTeam": "France",
+    "awayTeam": "Morocco",
+    "score": "0-0",
+    "minute": 12,
+    "homePossession": 58,
+    "homeShots": 3,
+    "awayShots": 1,
+    "recentEvents": ["Yellow card 8'\''"]
+  }' | jq
+```
+
+Expected (key fields — **this is the judged proof**):
+
+```json
+{
+  "analysis": "France's midfield trio … limiting Morocco's creativity.",
+  "prediction": "France will win 2-0 …",
+  "confidence": 85,
+  "processingTimeMs": 1800,
+  "model": "LLAMA_3_2_1B_INST_Q4_0",
+  "ranLocally": true,
+  "deviceInference": true,
+  "message": "Analysis generated locally — zero cloud, zero API calls"
+}
+```
+
+**WiFi-off demo:** disconnect network, re-run the `curl` above — `ranLocally` stays `true`. QVAC never calls OpenAI, Venice, or Azure.
+
+### WDK — Sepolia on-chain
+
+```bash
+curl -s http://127.0.0.1:3001/api/wallet/balance | jq
+```
+
+| Proof | Link |
+|-------|------|
+| Demo wallet | [0x64998cb8…e57d3 on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3) |
+| USDt balance | ~100 USDt via [0xd077A400…e4fDb](https://sepolia.etherscan.io/token/0xd077A400968890Eacc75cdc901F0356c943e4fDb?a=0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3) |
+| Live tip TX | [0xed0df152…02338e](https://sepolia.etherscan.io/tx/0xed0df1529a1bebbf5c7fbe22ec5e59dde30a63e7daa6510ab8b5bfcc8d02338e) (0.01 USDt) |
+
+Send your own tip proof:
+
+```bash
+curl -s -X POST http://127.0.0.1:3001/api/wallet/tip \
+  -H "Content-Type: application/json" \
+  -d '{"recipientAddress":"0x70997970C51812dc3A010C7d01b50e0d17dc79C8","amountUsdt":0.01,"note":"KICKOFF proof"}' | jq
+```
+
+Returns `txHash` — paste into [Sepolia Etherscan](https://sepolia.etherscan.io/).
+
+### Pears — Hyperswarm P2P room
+
+```bash
+curl -s -X POST http://127.0.0.1:3001/api/rooms/join \
+  -H "Content-Type: application/json" \
+  -d '{"matchName":"France-Morocco-QF"}' | jq
+```
+
+Expected: `"p2p": true`, `"topic": "<sha256 hash>"`, `"noServer": "Chat syncs over Hyperswarm P2P …"`
+
 ### WC26 fixtures (verified Jul 8 2026)
 
 | Stage | Matches |
