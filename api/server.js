@@ -37,7 +37,7 @@ app.use(
   cors({
     origin(origin, cb) {
       if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-      return cb(null, true); // local dev — permissive for Lovable preview
+      return cb(null, true); // local dev — permissive CORS
     },
   }),
 );

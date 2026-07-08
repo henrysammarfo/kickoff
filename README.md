@@ -11,11 +11,17 @@ P2P football intelligence for World Cup 2026 — **Pears (P2P) + QVAC (local AI)
 
 ## Quick start
 
-### Frontend (Lovable / TanStack)
+### Frontend (TanStack Start)
 
 ```bash
-bun install
-bun run dev
+npm install
+npm run dev          # http://localhost:5173
+```
+
+Point the UI at the local API (optional — defaults to `http://127.0.0.1:3001`):
+
+```bash
+echo 'VITE_API_BASE=http://127.0.0.1:3001' >> .env
 ```
 
 ### Backend (QVAC + Hyperswarm + WDK)
@@ -32,18 +38,15 @@ Smoke test (server must be running):
 npm run api:smoke
 ```
 
-### linestackruntime / local QVAC
+### QVAC configuration
 
-If you built **linestackruntime** locally, point the API at it:
+Local inference uses `@qvac/sdk` with a registry model by default. Optional overrides:
 
 ```bash
-# Option A — custom bare/linestack build directory
-export QVAC_LINESTACK_RUNTIME_PATH=/path/to/linestackruntime
-
-# Option B — OpenAI-compatible HTTP server from your runtime
+# OpenAI-compatible local server (e.g. from linestackruntime reference project)
 export QVAC_HTTP_URL=http://127.0.0.1:8080
 
-# Option C — local GGUF file
+# Local GGUF file
 export QVAC_MODEL_PATH=/path/to/model.gguf
 ```
 

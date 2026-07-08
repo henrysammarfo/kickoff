@@ -1,12 +1,14 @@
 /**
- * Resolves QVAC / linestackruntime paths for local inference.
+ * QVAC runtime configuration via environment variables.
  *
- * Set one of:
- *   QVAC_LINESTACK_RUNTIME_PATH  — custom bare/linestack runtime build
- *   LINESTACK_RUNTIME_PATH       — alias
- *   QVAC_CONFIG_PATH             — explicit qvac.config.*
- *   QVAC_MODEL_PATH              — local .gguf file
- *   QVAC_HTTP_URL                — OpenAI-compatible local server (e.g. linestack HTTP)
+ * Optional overrides (see .env.example):
+ *   QVAC_CONFIG_PATH   — explicit qvac.config.*
+ *   QVAC_MODEL_PATH    — local .gguf file
+ *   QVAC_HTTP_URL      — OpenAI-compatible local inference server
+ *   QVAC_MODEL         — registry model key (default: LLAMA_3_2_1B_INST_Q4_0)
+ *
+ * linestackruntime is a separate reference project — if you run its HTTP
+ * server locally, set QVAC_HTTP_URL. No automatic path detection.
  */
 
 import fs from "fs";
@@ -17,32 +19,11 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "../..");
 
-const RUNTIME_CANDIDATES = [
-  process.env.QVAC_LINESTACK_RUNTIME_PATH,
-  process.env.LINESTACK_RUNTIME_PATH,
-  path.join(REPO_ROOT, "linestackruntime"),
-  path.join(REPO_ROOT, "..", "linestackruntime"),
-  path.join(os.homedir(), "linestackruntime"),
-  path.join(os.homedir(), "projects", "linestackruntime"),
-  path.join(os.homedir(), "dev", "linestackruntime"),
-].filter(Boolean);
-
-export function resolveLinestackRuntimePath() {
-  for (const candidate of RUNTIME_CANDIDATES) {
-    const resolved = path.resolve(candidate);
-    if (fs.existsSync(resolved)) {
-      return resolved;
-    }
-  }
-  return null;
-}
-
 export function ensureQvacConfig() {
   if (process.env.QVAC_CONFIG_PATH) {
     return process.env.QVAC_CONFIG_PATH;
   }
 
-  const runtimePath = resolveLinestackRuntimePath();
   const cacheDirectory =
     process.env.QVAC_CACHE_DIRECTORY ||
     path.join(os.homedir(), ".qvac", "models");
@@ -52,20 +33,6 @@ export function ensureQvacConfig() {
     cacheDirectory,
     loggerConsoleOutput: process.env.QVAC_LOG === "1",
   };
-
-  if (runtimePath) {
-    config.linestackRuntimePath = runtimePath;
-    process.env.QVAC_LINESTACK_RUNTIME_PATH = runtimePath;
-
-    // If runtime ships a qvac.config, prefer it
-    for (const name of ["qvac.config.json", "qvac.config.js", "qvac.config.mjs"]) {
-      const nested = path.join(runtimePath, name);
-      if (fs.existsSync(nested)) {
-        process.env.QVAC_CONFIG_PATH = nested;
-        return nested;
-      }
-    }
-  }
 
   if (!fs.existsSync(configPath)) {
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
@@ -88,19 +55,20 @@ export function getModelSource() {
     return { kind: "http", baseUrl: process.env.QVAC_HTTP_URL };
   }
 
-  return { kind: "registry", modelKey: process.env.QVAC_MODEL || "LLAMA_3_2_1B_INST_Q4_0" };
+  return {
+    kind: "registry",
+    modelKey: process.env.QVAC_MODEL || "LLAMA_3_2_1B_INST_Q4_0",
+  };
 }
 
 export function describeRuntime() {
-  const runtimePath = resolveLinestackRuntimePath();
   const model = getModelSource();
   return {
     configPath: process.env.QVAC_CONFIG_PATH || null,
-    linestackRuntimePath: runtimePath,
-    linestackRuntimeFound: Boolean(runtimePath),
     model,
     cacheDirectory:
       process.env.QVAC_CACHE_DIRECTORY ||
       path.join(os.homedir(), ".qvac", "models"),
+    httpUrl: process.env.QVAC_HTTP_URL || null,
   };
 }

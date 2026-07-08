@@ -1,5 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { WALLET, ROOMS, POOLS, MATCHES } from "@/lib/mock-data";
+import type { ComponentType } from "react";
+import { FIXTURES } from "@/lib/fixtures";
+import {
+  useWallet,
+  useHealth,
+  usePools,
+  useAiStatus,
+} from "@/hooks/use-kickoff";
 import { ArrowUpRight, TrendingUp, Wallet, Radio, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/")({
@@ -7,59 +14,109 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function DashHome() {
+  const { data: wallet } = useWallet();
+  const { data: health } = useHealth();
+  const { data: pools } = usePools();
+  const { data: ai } = useAiStatus();
+
+  const liveCount = FIXTURES.filter((f) => f.status === "live").length;
+  const openPools = pools?.filter((p) => p.status === "open").length ?? 0;
+
   return (
     <div className="space-y-10">
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">// overview</p>
-        <h1 className="mt-4 font-display text-5xl text-white md:text-6xl">Good evening.</h1>
-        <p className="mt-3 text-[#A0A0A0]">Two matches live, {ROOMS.reduce((a, r) => a + r.peers, 0).toLocaleString()} peers online.</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">
+          // overview
+        </p>
+        <h1 className="mt-4 font-display text-5xl text-white md:text-6xl">
+          Good evening.
+        </h1>
+        <p className="mt-3 text-[#A0A0A0]">
+          {liveCount} match{liveCount === 1 ? "" : "es"} live ·{" "}
+          {health?.activeRooms ?? 0} active room
+          {(health?.activeRooms ?? 0) === 1 ? "" : "s"} ·{" "}
+          {health?.teamNation ?? "Ghana"} 🇬🇭
+        </p>
       </div>
 
-      {/* Stat cards */}
       <div className="grid gap-4 md:grid-cols-4">
-        <StatCard icon={Wallet} label="Wallet · USDt" value={WALLET.balance.toFixed(2)} sub="+42 today" />
-        <StatCard icon={Radio} label="Active rooms" value={String(ROOMS.length)} sub="3 unread" />
-        <StatCard icon={Trophy} label="Open pools" value={String(POOLS.filter(p => p.status === "open").length)} sub="1 live" />
-        <StatCard icon={TrendingUp} label="AI reads today" value="14" sub="Phi-3 Mini" />
+        <StatCard
+          icon={Wallet}
+          label="Wallet · USDt"
+          value={(wallet?.usdt ?? 0).toFixed(2)}
+          sub={wallet?.network ?? "WDK testnet"}
+        />
+        <StatCard
+          icon={Radio}
+          label="Active rooms"
+          value={String(health?.activeRooms ?? 0)}
+          sub={`${liveCount} live fixtures`}
+        />
+        <StatCard
+          icon={Trophy}
+          label="Open pools"
+          value={String(openPools)}
+          sub={`${pools?.length ?? 0} total`}
+        />
+        <StatCard
+          icon={TrendingUp}
+          label="Local AI"
+          value={ai?.ready ? "Ready" : "Loading"}
+          sub={ai?.model ?? "QVAC"}
+        />
       </div>
 
-      {/* Live matches + activity */}
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="glass rounded-2xl p-6 lg:col-span-2">
           <div className="mb-6 flex items-center justify-between">
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">Live & upcoming</p>
-            <Link to="/matches" className="font-mono text-[10px] uppercase tracking-widest text-[#C6FF3D] hover:underline">All matches →</Link>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">
+              Live & upcoming
+            </p>
+            <Link
+              to="/matches"
+              className="font-mono text-[10px] uppercase tracking-widest text-[#C6FF3D] hover:underline"
+            >
+              All matches →
+            </Link>
           </div>
           <div className="space-y-4">
-            {MATCHES.slice(0, 4).map((m) => (
-              <Link key={m.id} to="/matches/$matchId" params={{ matchId: m.id }} className="flex items-center justify-between border-b border-white/5 pb-4 last:border-0 hover:opacity-80">
+            {FIXTURES.slice(0, 4).map((m) => (
+              <Link
+                key={m.id}
+                to="/matches/$matchId"
+                params={{ matchId: m.id }}
+                className="flex items-center justify-between border-b border-white/5 pb-4 last:border-0 hover:opacity-80"
+              >
                 <div className="flex items-center gap-4">
                   <span className="text-xl">{m.homeFlag}</span>
                   <span className="text-white">{m.home}</span>
-                  <span className="font-mono text-xs text-[#A0A0A0]">{m.score}</span>
+                  <span className="font-mono text-xs text-[#A0A0A0]">
+                    {m.score}
+                  </span>
                   <span className="text-white">{m.away}</span>
                   <span className="text-xl">{m.awayFlag}</span>
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">{m.status === "live" ? `LIVE ${m.minute}` : m.kickoff}</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
+                  {m.status === "live" ? `LIVE ${m.minute}` : m.kickoff}
+                </span>
               </Link>
             ))}
           </div>
         </div>
 
         <div className="glass rounded-2xl p-6">
-          <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">Recent activity</p>
+          <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">
+            Stack status
+          </p>
           <div className="space-y-4 text-sm">
-            {WALLET.tx.slice(0, 5).map((t) => (
-              <div key={t.id} className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-white">{t.note}</p>
-                  <p className="mt-0.5 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">{t.ts}</p>
-                </div>
-                <span className={`font-mono text-xs ${t.amount > 0 ? "text-[#C6FF3D]" : "text-white/70"}`}>
-                  {t.amount > 0 ? "+" : ""}{t.amount}
-                </span>
-              </div>
-            ))}
+            <StatusRow label="API" ok={health?.status === "ok"} />
+            <StatusRow label="QVAC" ok={health?.qvac} detail={health?.qvacMode} />
+            <StatusRow label="WDK wallet" ok={health?.wallet} />
+            <StatusRow
+              label="P2P rooms"
+              ok={(health?.activeRooms ?? 0) > 0}
+              detail={`${health?.activeRooms ?? 0} joined`}
+            />
           </div>
         </div>
       </div>
@@ -67,7 +124,17 @@ function DashHome() {
   );
 }
 
-function StatCard({ icon: Icon, label, value, sub }: any) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  sub,
+}: {
+  icon: ComponentType<{ className?: string; strokeWidth?: number }>;
+  label: string;
+  value: string;
+  sub: string;
+}) {
   return (
     <div className="glass rounded-2xl p-6">
       <div className="flex items-center justify-between">
@@ -75,8 +142,38 @@ function StatCard({ icon: Icon, label, value, sub }: any) {
         <ArrowUpRight className="h-3.5 w-3.5 text-[#A0A0A0]" strokeWidth={1.5} />
       </div>
       <p className="mt-6 font-display text-4xl text-white">{value}</p>
-      <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.25em] text-[#A0A0A0]">{label}</p>
+      <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.25em] text-[#A0A0A0]">
+        {label}
+      </p>
       <p className="mt-3 text-xs text-[#A0A0A0]">{sub}</p>
+    </div>
+  );
+}
+
+function StatusRow({
+  label,
+  ok,
+  detail,
+}: {
+  label: string;
+  ok?: boolean;
+  detail?: string;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div>
+        <p className="text-white">{label}</p>
+        {detail && (
+          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
+            {detail}
+          </p>
+        )}
+      </div>
+      <span
+        className={`font-mono text-xs ${ok ? "text-[#C6FF3D]" : "text-amber-400"}`}
+      >
+        {ok ? "online" : "offline"}
+      </span>
     </div>
   );
 }
