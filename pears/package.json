@@ -1,0 +1,15 @@
+{
+  "name": "kickoff-pears",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "pear": {
+    "name": "kickoff",
+    "main": "app.js",
+    "title": "KICKOFF P2P"
+  },
+  "dependencies": {
+    "hyperswarm": "^4.17.0",
+    "b4a": "^1.7.3"
+  }
+}

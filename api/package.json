@@ -1,0 +1,24 @@
+{
+  "name": "kickoff-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "smoke": "node ../scripts/smoke-test.js"
+  },
+  "dependencies": {
+    "@qvac/sdk": "^0.14.1",
+    "@tetherto/wdk": "^1.0.0-beta.13",
+    "@tetherto/wdk-wallet-evm": "^1.0.0-beta.13",
+    "b4a": "^1.7.3",
+    "compact-encoding": "^2.18.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "hyperswarm": "^4.17.0",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.2"
+  }
+}

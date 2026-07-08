@@ -9,7 +9,10 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "api:dev": "npm run dev --prefix api",
+    "api:start": "npm run start --prefix api",
+    "api:smoke": "npm run smoke --prefix api"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
