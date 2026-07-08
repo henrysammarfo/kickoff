@@ -2,29 +2,79 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
 import { LogoLockup } from "@/components/brand/LogoLockup";
 import { Logomark } from "@/components/brand/Logomark";
-import { Wordmark } from "@/components/brand/Wordmark";
+import { Bell, Trophy } from "lucide-react";
+
+import hoodieBlack from "@/assets/merch-hoodie-black.jpg";
+import hoodiePitch from "@/assets/merch-hoodie-pitch.jpg";
+import teeBlack from "@/assets/merch-tee-black.jpg";
+import capBlack from "@/assets/merch-cap-black.jpg";
+import scarf from "@/assets/merch-scarf.jpg";
+import poster from "@/assets/merch-poster.jpg";
 
 export const Route = createFileRoute("/merch")({
   head: () => ({
     meta: [
-      { title: "Merch — KICKOFF" },
-      { name: "description", content: "Hoodies, tees, caps, and prints. The KICKOFF brand system, on your back." },
-      { property: "og:title", content: "Merch — KICKOFF" },
-      { property: "og:description", content: "The KICKOFF brand system on hoodies, tees, and caps." },
+      { title: "Merch — KICKOFF · Coming Soon" },
+      { name: "description", content: "Hoodies, tees, caps, and prints. The KICKOFF brand system, on your back. First drop after the WC26 final." },
+      { property: "og:title", content: "Merch — KICKOFF · Coming Soon" },
+      { property: "og:description", content: "The KICKOFF brand system on hoodies, tees, and caps. First drop after WC26." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/merch" },
+      { property: "og:image", content: hoodieBlack },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: hoodieBlack },
     ],
+    links: [{ rel: "canonical", href: "/merch" }],
   }),
   component: Merch,
 });
 
+const DROPS: {
+  src: string; alt: string; name: string; price: string;
+}[] = [
+  { src: hoodieBlack, alt: "Black KICKOFF hoodie with serif chest print", name: "Terrace Hoodie · Black", price: "$68" },
+  { src: hoodiePitch, alt: "Pitch-green KICKOFF hoodie", name: "Away Hoodie · Pitch", price: "$68" },
+  { src: teeBlack, alt: "Black KICKOFF t-shirt", name: "Standard Tee · Black", price: "$32" },
+  { src: capBlack, alt: "Black KICKOFF dad cap with lime embroidery", name: "Ref Cap · Pitch tab", price: "$28" },
+  { src: scarf, alt: "White KICKOFF scarf with edge print", name: "Terrace Scarf · Chalk", price: "$38" },
+  { src: poster, alt: "KICKOFF manifesto poster in lime", name: "Manifesto Poster · A2", price: "$24" },
+];
+
 function Merch() {
   return (
     <PageShell
-      eyebrow="// wear it"
+      eyebrow="// wear it · drop 001"
       title="For the fans who own it."
-      lede="A brand system built to hold up on merch. Single-color mark, tight wordmark, one accent. Below: how it wears."
+      lede="A brand system built to hold up on merch. Single-color mark, tight wordmark, one accent. First drop lands after the WC26 final — you'll want to be on the list."
     >
+      {/* Coming soon banner */}
+      <div className="mb-16 grid gap-4 sm:mb-24 sm:grid-cols-[1fr_auto] sm:items-end">
+        <div className="rounded-2xl border border-[#C6FF3D]/30 bg-[#C6FF3D]/[0.06] p-6 sm:p-8">
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#C6FF3D]">// drop 001 · coming soon</p>
+          <h2 className="mt-4 font-display text-3xl leading-tight text-white sm:text-5xl">
+            Ships after<br />the final.
+          </h2>
+          <p className="mt-4 max-w-lg text-sm leading-relaxed text-[#A0A0A0] sm:text-base">
+            The top 100 tip senders during WC26 get first access. Everyone else joins the waitlist. WC26 is the launch — KICKOFF and its merch keep running long after.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:items-end">
+          <a
+            href="mailto:drops@kickoff.football?subject=Waitlist"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C6FF3D] px-6 py-3.5 text-sm font-medium text-black transition-transform hover:scale-[1.02]"
+          >
+            <Bell className="h-4 w-4" strokeWidth={1.75} />
+            Join the waitlist
+          </a>
+          <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">
+            <Trophy className="h-3 w-3" strokeWidth={1.75} />
+            Top 100 tippers · first access
+          </p>
+        </div>
+      </div>
+
       {/* Brand assets grid */}
-      <section className="mb-24 grid gap-6 md:grid-cols-3">
+      <section className="mb-20 grid gap-4 sm:mb-24 sm:grid-cols-3 sm:gap-6">
         <BrandCard label="Primary lockup" bg="bg-black">
           <div className="text-white"><LogoLockup size={40} /></div>
         </BrandCard>
@@ -38,19 +88,19 @@ function Merch() {
 
       {/* Merch mockups */}
       <section>
-        <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">// drops</p>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Hoodie color="bg-black" text="text-white" name="Terrace Hoodie · Black" price="$68" />
-          <Hoodie color="bg-[#111]" text="text-[#C6FF3D]" name="Away Hoodie · Pitch" price="$68" />
-          <Hoodie color="bg-white" text="text-black" name="Home Hoodie · Chalk" price="$68" />
-          <Tee color="bg-black" text="text-white" name="Standard Tee · Black" price="$32" />
-          <Cap color="bg-black" text="text-[#C6FF3D]" name="Ref Cap · Pitch tab" price="$28" />
-          <Poster />
+        <div className="mb-8 flex items-center justify-between">
+          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">// the drop</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">6 pieces</p>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+          {DROPS.map((d) => (
+            <ProductCard key={d.name} {...d} />
+          ))}
         </div>
       </section>
 
       <p className="mt-16 max-w-xl text-sm text-[#A0A0A0]">
-        Merch drops post-tournament. Enter the pool of holders — the top 100 tip senders during WC26 get first access.
+        Everything ships on 100% cotton, printed in short runs, numbered. No re-drops of the same colorway.
       </p>
     </PageShell>
   );
@@ -58,87 +108,32 @@ function Merch() {
 
 function BrandCard({ label, bg, children }: { label: string; bg: string; children: React.ReactNode }) {
   return (
-    <div className="glass rounded-2xl p-4">
+    <div className="glass rounded-2xl p-3 sm:p-4">
       <div className={`flex aspect-square items-center justify-center rounded-xl ${bg}`}>{children}</div>
-      <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">{label}</p>
+      <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0] sm:mt-4">{label}</p>
     </div>
   );
 }
 
-function Hoodie({ color, text, name, price }: { color: string; text: string; name: string; price: string }) {
+function ProductCard({ src, alt, name, price }: { src: string; alt: string; name: string; price: string }) {
   return (
-    <div className="glass overflow-hidden rounded-2xl">
-      <div className={`relative flex aspect-[4/5] items-center justify-center ${color}`}>
-        <svg viewBox="0 0 200 240" className="h-full w-full">
-          <path d="M40 60 L70 40 L100 55 L130 40 L160 60 L180 90 L165 100 L165 220 L35 220 L35 100 L20 90 Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-          <path d="M70 40 Q100 65 130 40" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-          <g transform="translate(100,140)" className={text}>
-            <text textAnchor="middle" fontFamily="Instrument Serif, serif" fontSize="28" fill="currentColor">KICKOFF</text>
-            <text textAnchor="middle" y="18" fontFamily="JetBrains Mono, monospace" fontSize="7" letterSpacing="3" fill="currentColor" opacity="0.7">// WC26 · P2P</text>
-          </g>
-        </svg>
+    <div className="glass group overflow-hidden rounded-2xl">
+      <div className="relative aspect-[4/5] overflow-hidden bg-black">
+        <img
+          src={src}
+          alt={alt}
+          width={1024}
+          height={1280}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+        />
+        <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.25em] text-[#C6FF3D] backdrop-blur">
+          Coming soon
+        </span>
       </div>
-      <div className="flex items-center justify-between p-5">
-        <p className="text-sm text-white">{name}</p>
-        <p className="font-mono text-xs text-[#C6FF3D]">{price}</p>
-      </div>
-    </div>
-  );
-}
-
-function Tee({ color, text, name, price }: { color: string; text: string; name: string; price: string }) {
-  return (
-    <div className="glass overflow-hidden rounded-2xl">
-      <div className={`relative flex aspect-[4/5] items-center justify-center ${color}`}>
-        <svg viewBox="0 0 200 240" className="h-full w-full">
-          <path d="M40 55 L70 35 L100 50 L130 35 L160 55 L180 80 L160 95 L160 220 L40 220 L40 95 L20 80 Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-          <g transform="translate(100,130)" className={text}>
-            <text textAnchor="middle" fontFamily="Instrument Serif, serif" fontSize="24" fill="currentColor">K</text>
-            <text textAnchor="middle" y="22" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="2.5" fill="currentColor" opacity="0.7">KICKOFF</text>
-          </g>
-        </svg>
-      </div>
-      <div className="flex items-center justify-between p-5">
-        <p className="text-sm text-white">{name}</p>
-        <p className="font-mono text-xs text-[#C6FF3D]">{price}</p>
-      </div>
-    </div>
-  );
-}
-
-function Cap({ color, text, name, price }: { color: string; text: string; name: string; price: string }) {
-  return (
-    <div className="glass overflow-hidden rounded-2xl">
-      <div className={`relative flex aspect-[4/5] items-center justify-center ${color}`}>
-        <svg viewBox="0 0 200 240" className="h-full w-full">
-          <path d="M40 130 Q100 60 160 130 L160 155 L40 155 Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-          <path d="M30 155 Q100 175 170 155 L170 165 Q100 185 30 165 Z" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-          <g transform="translate(100,120)" className={text}>
-            <text textAnchor="middle" fontFamily="JetBrains Mono, monospace" fontSize="10" letterSpacing="3" fill="currentColor">KICKOFF</text>
-          </g>
-        </svg>
-      </div>
-      <div className="flex items-center justify-between p-5">
-        <p className="text-sm text-white">{name}</p>
-        <p className="font-mono text-xs text-[#C6FF3D]">{price}</p>
-      </div>
-    </div>
-  );
-}
-
-function Poster() {
-  return (
-    <div className="glass overflow-hidden rounded-2xl">
-      <div className="relative flex aspect-[4/5] items-center justify-center bg-[#C6FF3D]">
-        <div className="text-black">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em]">// n° 001</p>
-          <div className="mt-4"><Wordmark className="text-6xl" /></div>
-          <p className="mt-6 max-w-[180px] font-display text-2xl italic">Football, without the middlemen.</p>
-        </div>
-      </div>
-      <div className="flex items-center justify-between p-5">
-        <p className="text-sm text-white">Manifesto Poster · A2</p>
-        <p className="font-mono text-xs text-[#C6FF3D]">$24</p>
+      <div className="flex items-center justify-between gap-3 p-4 sm:p-5">
+        <p className="min-w-0 truncate text-sm text-white">{name}</p>
+        <p className="shrink-0 font-mono text-xs text-[#C6FF3D]">{price}</p>
       </div>
     </div>
   );
