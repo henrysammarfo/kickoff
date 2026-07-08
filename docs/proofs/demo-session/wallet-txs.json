@@ -1,0 +1,24 @@
+{
+  "wallet": "0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3",
+  "network": "sepolia",
+  "usdtToken": "0xd077A400968890Eacc75cdc901F0356c943e4fDb",
+  "usdtBeforeDemo": 100,
+  "usdtAfterDemo": 99.98,
+  "tips": [
+    {
+      "amountUsdt": 0.01,
+      "txHash": "0xed0df1529a1bebbf5c7fbe22ec5e59dde30a63e7daa6510ab8b5bfcc8d02338e",
+      "etherscan": "https://sepolia.etherscan.io/tx/0xed0df1529a1bebbf5c7fbe22ec5e59dde30a63e7daa6510ab8b5bfcc8d02338e",
+      "timestampUtc": "2026-07-08T22:48:36Z",
+      "note": "Demo / first WDK tip"
+    },
+    {
+      "amountUsdt": 0.01,
+      "txHash": "0xfeffc5d336bd164e5e278840df7636b2a8b54318f48f7610ee2f93937711d738",
+      "etherscan": "https://sepolia.etherscan.io/tx/0xfeffc5d336bd164e5e278840df7636b2a8b54318f48f7610ee2f93937711d738",
+      "timestampUtc": "2026-07-08T22:52:24Z",
+      "note": "Demo / second WDK tip"
+    }
+  ],
+  "etherscanAddress": "https://sepolia.etherscan.io/address/0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3"
+}

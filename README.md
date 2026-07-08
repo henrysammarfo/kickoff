@@ -37,9 +37,42 @@ Open **http://localhost:3002** → Matches → join a QF room → **Analyze** (Q
 
 **First QVAC run** downloads ~773MB model to `~/.qvac/models` (one-time).
 
-## Proofs (copy-paste while API is running)
+## Proofs — live demo session (@henrysammarfo, Jul 8 2026)
 
-Judges can verify all three stacks from the terminal — no frontend required.
+**Your wallet, txs, and QVAC runs from the recorded demo.** Full write-up: [docs/proofs/DEMO-SESSION.md](./docs/proofs/DEMO-SESSION.md)
+
+### WDK — your Sepolia transactions
+
+| | |
+|---|---|
+| **Wallet** | [`0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3`](https://sepolia.etherscan.io/address/0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3) |
+| **USDt** | 100 → **99.98 USDt** after demo (2 on-chain tips) |
+| **Tip #1** · 0.01 USDt · 22:48 UTC | [`0xed0df152…02338e`](https://sepolia.etherscan.io/tx/0xed0df1529a1bebbf5c7fbe22ec5e59dde30a63e7daa6510ab8b5bfcc8d02338e) |
+| **Tip #2** · 0.01 USDt · 22:52 UTC | [`0xfeffc5d3…11d738`](https://sepolia.etherscan.io/tx/0xfeffc5d336bd164e5e278840df7636b2a8b54318f48f7610ee2f93937711d738) |
+
+### QVAC — analyses you ran in the demo
+
+Every response: **`ranLocally: true`** · **`deviceInference: true`** · no cloud API
+
+| Match | Room | Proof JSON |
+|-------|------|------------|
+| France vs Morocco QF | `/matches/mar-fra` | [qvac-france-morocco-qf.json](./docs/proofs/demo-session/qvac-france-morocco-qf.json) |
+| Norway vs England QF | `/matches/nor-eng` | [qvac-norway-england-qf.json](./docs/proofs/demo-session/qvac-norway-england-qf.json) |
+| France vs Paraguay R16 | `/matches/fra-par` | [qvac-france-paraguay-r16.json](./docs/proofs/demo-session/qvac-france-paraguay-r16.json) |
+
+Example output (France vs Morocco, demo):
+
+> *"France's dominance of possession is a concern, with Morocco's solidity in midfield forcing them back…"* — `ranLocally: true`, 3026ms, confidence 85%
+
+### Pears — room you joined
+
+France-Morocco-QF · topic `7176a8186ec2acd100e6022d511101934cb583a1a7a2ecb2c2711a3a2c288b48` · `p2p: true`
+
+---
+
+## Proofs (judges — reproduce locally)
+
+Judges can re-verify all three stacks from the terminal — no frontend required.
 
 **One command** — saves JSON proofs to `docs/proofs/`:
 
@@ -134,22 +167,9 @@ curl -s -X POST http://127.0.0.1:3001/api/ai/predict \
 
 **WiFi-off demo:** disconnect network → re-run step 2 → `ranLocally` stays `true`. No OpenAI, Venice, or Azure in the AI path.
 
-Full captured JSON: [docs/proofs/qvac-analyze.json](./docs/proofs/qvac-analyze.json)
+Demo session JSON: [docs/proofs/demo-session/](./docs/proofs/demo-session/)
 
-### WDK — Sepolia on-chain
-
-```bash
-curl -s http://127.0.0.1:3001/api/wallet/balance | jq
-```
-
-| Proof | Link |
-|-------|------|
-| Demo wallet | [0x64998cb8…e57d3 on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3) |
-| USDt (~100) | [Token 0xd077A400…e4fDb](https://sepolia.etherscan.io/token/0xd077A400968890Eacc75cdc901F0356c943e4fDb?a=0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3) |
-| Tip TX #1 | [0xed0df152…02338e](https://sepolia.etherscan.io/tx/0xed0df1529a1bebbf5c7fbe22ec5e59dde30a63e7daa6510ab8b5bfcc8d02338e) |
-| Tip TX #2 | [0xfeffc5d3…11d738](https://sepolia.etherscan.io/tx/0xfeffc5d336bd164e5e278840df7636b2a8b54318f48f7610ee2f93937711d738) |
-
-Send a fresh on-chain tip:
+### WDK — Sepolia on-chain (reproduce)
 
 ```bash
 curl -s -X POST http://127.0.0.1:3001/api/wallet/tip \
@@ -265,7 +285,8 @@ The `/download` page describes the Pear distribution model — not App Store bin
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System design + Mermaid flows |
 | [docs/ROADMAP.md](./docs/ROADMAP.md) | Product phases beyond WC26 |
 | [docs/SUBMISSION.md](./docs/SUBMISSION.md) | Hackathon checklist + demo script |
-| [docs/proofs/](./docs/proofs/) | Live captured API proof JSON (QVAC, WDK, P2P) |
+| [docs/proofs/DEMO-SESSION.md](./docs/proofs/DEMO-SESSION.md) | **Author demo proofs** — txs + QVAC JSON |
+| [docs/proofs/demo-session/](./docs/proofs/demo-session/) | Captured QVAC responses from live demo |
 | [docs/KICKOFF_BUILD_GUIDE.md](./docs/KICKOFF_BUILD_GUIDE.md) | Team build bible |
 | [docs/memory/](./docs/memory/) | Verified facts, API keys, strategy |
 
