@@ -1,0 +1,23 @@
+{
+  "status": "ok",
+  "error": null,
+  "qvac": true,
+  "qvacMode": "qvac-registry",
+  "wallet": true,
+  "activeRooms": 2,
+  "liveData": false,
+  "liveDataStatus": {
+    "tinyfishConfigured": false,
+    "cacheAgeMs": 36611,
+    "lastSource": "fixtures",
+    "matchCount": 12
+  },
+  "teamNation": "Ghana",
+  "description": "KICKOFF: Local AI + P2P + Self-custodial. All three Tether stacks.",
+  "stacks": {
+    "qvac": "on-device inference via @qvac/sdk",
+    "pears": "Hyperswarm P2P via Pears building blocks",
+    "wdk": "self-custodial @tetherto/wdk",
+    "liveIngest": "TinyFish web ingestion → local QVAC analysis"
+  }
+}

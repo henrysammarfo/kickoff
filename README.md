@@ -41,27 +41,49 @@ Open **http://localhost:3002** → Matches → join a QF room → **Analyze** (Q
 
 Judges can verify all three stacks from the terminal — no frontend required.
 
-### QVAC — on-device inference
+**One command** — saves JSON proofs to `docs/proofs/`:
 
-Model loads once at API boot (`[QVAC] Model loaded locally`). Confirm readiness:
+```bash
+npm run api:proofs
+```
+
+Also run: `npm run api:smoke` (quick) · `npm run api:stress` (full suite)
+
+### QVAC — on-device inference (judged proof)
+
+On API boot you should see:
+
+```
+[QVAC] Download 100% (773.0/773.0 MB)
+[QVAC] Model loaded locally | mode=qvac-registry | id=bd4db59fb4120b52
+```
+
+Model cache: `~/.qvac/models` · config: `qvac.config.json` · **no `httpUrl`** (not a cloud proxy).
+
+**1. Confirm model is loaded locally**
 
 ```bash
 curl -s http://127.0.0.1:3001/api/ai/status | jq
 ```
 
-Expected (key fields):
+Live response (captured 2026-07-08):
 
 ```json
 {
   "ready": true,
   "mode": "qvac-registry",
   "model": "LLAMA_3_2_1B_INST_Q4_0",
+  "modelId": "bd4db59fb4120b52",
   "runningLocally": true,
-  "noCloudDependency": true
+  "noCloudDependency": true,
+  "runtime": {
+    "cacheDirectory": "/home/ubuntu/.qvac/models",
+    "httpUrl": null
+  }
 }
 ```
 
-Run a live analysis (France vs Morocco QF stats):
+**2. Run live match analysis** (France vs Morocco QF)
 
 ```bash
 curl -s -X POST http://127.0.0.1:3001/api/ai/analyze \
@@ -78,14 +100,14 @@ curl -s -X POST http://127.0.0.1:3001/api/ai/analyze \
   }' | jq
 ```
 
-Expected (key fields — **this is the judged proof**):
+Live response — **look for `ranLocally: true`**:
 
 ```json
 {
-  "analysis": "France's midfield trio … limiting Morocco's creativity.",
-  "prediction": "France will win 2-0 …",
-  "confidence": 85,
-  "processingTimeMs": 1800,
+  "analysis": "France's defensive shape needs improvement after the yellow card, allowing Morocco to launch long-range attacks.",
+  "prediction": "France will push for an equalizer in the 45' minute, but Morocco's cohesion will allow them to counter-attack.",
+  "confidence": 60,
+  "processingTimeMs": 1727,
   "model": "LLAMA_3_2_1B_INST_Q4_0",
   "ranLocally": true,
   "deviceInference": true,
@@ -93,7 +115,26 @@ Expected (key fields — **this is the judged proof**):
 }
 ```
 
-**WiFi-off demo:** disconnect network, re-run the `curl` above — `ranLocally` stays `true`. QVAC never calls OpenAI, Venice, or Azure.
+**3. Run outcome prediction** (Norway vs England QF)
+
+```bash
+curl -s -X POST http://127.0.0.1:3001/api/ai/predict \
+  -H "Content-Type: application/json" \
+  -d '{"homeTeam":"Norway","awayTeam":"England","context":"World Cup 2026 quarter-final"}' | jq
+```
+
+```json
+{
+  "prediction": "Norway vs England … Prediction: Norway 2-1 England …",
+  "teams": { "home": "Norway", "away": "England" },
+  "ranLocally": true,
+  "mode": "qvac-registry"
+}
+```
+
+**WiFi-off demo:** disconnect network → re-run step 2 → `ranLocally` stays `true`. No OpenAI, Venice, or Azure in the AI path.
+
+Full captured JSON: [docs/proofs/qvac-analyze.json](./docs/proofs/qvac-analyze.json)
 
 ### WDK — Sepolia on-chain
 
@@ -104,10 +145,11 @@ curl -s http://127.0.0.1:3001/api/wallet/balance | jq
 | Proof | Link |
 |-------|------|
 | Demo wallet | [0x64998cb8…e57d3 on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3) |
-| USDt balance | ~100 USDt via [0xd077A400…e4fDb](https://sepolia.etherscan.io/token/0xd077A400968890Eacc75cdc901F0356c943e4fDb?a=0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3) |
-| Live tip TX | [0xed0df152…02338e](https://sepolia.etherscan.io/tx/0xed0df1529a1bebbf5c7fbe22ec5e59dde30a63e7daa6510ab8b5bfcc8d02338e) (0.01 USDt) |
+| USDt (~100) | [Token 0xd077A400…e4fDb](https://sepolia.etherscan.io/token/0xd077A400968890Eacc75cdc901F0356c943e4fDb?a=0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3) |
+| Tip TX #1 | [0xed0df152…02338e](https://sepolia.etherscan.io/tx/0xed0df1529a1bebbf5c7fbe22ec5e59dde30a63e7daa6510ab8b5bfcc8d02338e) |
+| Tip TX #2 | [0xfeffc5d3…11d738](https://sepolia.etherscan.io/tx/0xfeffc5d336bd164e5e278840df7636b2a8b54318f48f7610ee2f93937711d738) |
 
-Send your own tip proof:
+Send a fresh on-chain tip:
 
 ```bash
 curl -s -X POST http://127.0.0.1:3001/api/wallet/tip \
@@ -115,7 +157,7 @@ curl -s -X POST http://127.0.0.1:3001/api/wallet/tip \
   -d '{"recipientAddress":"0x70997970C51812dc3A010C7d01b50e0d17dc79C8","amountUsdt":0.01,"note":"KICKOFF proof"}' | jq
 ```
 
-Returns `txHash` — paste into [Sepolia Etherscan](https://sepolia.etherscan.io/).
+Returns `txHash` → verify on [Sepolia Etherscan](https://sepolia.etherscan.io/).
 
 ### Pears — Hyperswarm P2P room
 
@@ -125,7 +167,26 @@ curl -s -X POST http://127.0.0.1:3001/api/rooms/join \
   -d '{"matchName":"France-Morocco-QF"}' | jq
 ```
 
-Expected: `"p2p": true`, `"topic": "<sha256 hash>"`, `"noServer": "Chat syncs over Hyperswarm P2P …"`
+Live response:
+
+```json
+{
+  "matchName": "France-Morocco-QF",
+  "topic": "7176a8186ec2acd100e6022d511101934cb583a1a7a2ecb2c2711a3a2c288b48",
+  "p2p": true,
+  "noServer": "Chat syncs over Hyperswarm P2P — this API only bootstraps the local peer."
+}
+```
+
+### Full stack health
+
+```bash
+curl -s http://127.0.0.1:3001/api/health | jq '.status, .qvac, .wallet, .stacks'
+```
+
+Expected: `"ok"`, `true`, `true`, all three stacks listed.
+
+See [docs/proofs/](./docs/proofs/) for latest captured JSON files.
 
 ### WC26 fixtures (verified Jul 8 2026)
 
@@ -204,6 +265,7 @@ The `/download` page describes the Pear distribution model — not App Store bin
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System design + Mermaid flows |
 | [docs/ROADMAP.md](./docs/ROADMAP.md) | Product phases beyond WC26 |
 | [docs/SUBMISSION.md](./docs/SUBMISSION.md) | Hackathon checklist + demo script |
+| [docs/proofs/](./docs/proofs/) | Live captured API proof JSON (QVAC, WDK, P2P) |
 | [docs/KICKOFF_BUILD_GUIDE.md](./docs/KICKOFF_BUILD_GUIDE.md) | Team build bible |
 | [docs/memory/](./docs/memory/) | Verified facts, API keys, strategy |
 

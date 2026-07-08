@@ -1,0 +1,96 @@
+=== KICKOFF LIVE PROOFS 2026-07-08T22:53:01.230Z ===
+
+health:
+{
+  "status": "ok",
+  "error": null,
+  "qvac": true,
+  "qvacMode": "qvac-registry",
+  "wallet": true,
+  "activeRooms": 2,
+  "liveData": false,
+  "liveDataStatus": {
+    "tinyfishConfigured": false,
+    "cacheAgeMs": 36611,
+    "lastSource": "fixtures",
+    "matchCount": 12
+  },
+  "teamNation": "Ghana",
+  "description": "KICKOFF: Local AI + P2P + Self-custodial. All three Tether stacks.",
+  "stacks": {
+    "qvac": "on-device inference via @qvac/sdk",
+    "pears": "Hyperswarm P2P via Pears building blocks",
+    "wdk": "self-custodial @tetherto/wdk",
+    "liveIngest": "TinyFish web ingestion → local QVAC analysis"
+  }
+}
+
+qvac-status:
+{
+  "ready": true,
+  "mode": "qvac-registry",
+  "model": "LLAMA_3_2_1B_INST_Q4_0",
+  "modelId": "bd4db59fb4120b52",
+  "runningLocally": true,
+  "noCloudDependency": true,
+  "runtime": {
+    "configPath": "/workspace/qvac.config.json",
+    "model": {
+      "kind": "registry",
+      "modelKey": "LLAMA_3_2_1B_INST_Q4_0"
+    },
+    "cacheDirectory": "/home/ubuntu/.qvac/models",
+    "httpUrl": null
+  }
+}
+
+qvac-analyze:
+{
+  "raw": "[ANALYSIS] France's defensive wall holds strong, with Antoine Griezmann and Kylian Mbappé providing creative outlets, but Morocco's pace and skill offer few clear threats.\n[PREDICTION] France will dominate possession and create chances, but Morocco's counter-attacks will provide an outlet, potentially resulting in a Morocco goal in the 75th minute.\n[CONFIDENCE: 60%]",
+  "analysis": "France's defensive wall holds strong, with Antoine Griezmann and Kylian Mbappé providing creative outlets, but Morocco's pace and skill offer few clear threats.",
+  "prediction": "France will dominate possession and create chances, but Morocco's counter-attacks will provide an outlet, potentially resulting in a Morocco goal in the 75th minute.",
+  "confidence": 60,
+  "processingTimeMs": 2213,
+  "model": "LLAMA_3_2_1B_INST_Q4_0",
+  "ranLocally": true,
+  "mode": "qvac-registry",
+  "deviceInference": true,
+  "message": "Analysis generated locally — zero cloud, zero API calls"
+}
+
+qvac-predict:
+{
+  "prediction": "Norway 2, England 1\n\nKey tactical factor: Norway's defense will look to exploit England's over-reliance on pace. They'll target the English center backs, particularly the 20-year-old sensation, using a high-pressing approach.\n\nScore Prediction: Norway 2.5, England 1.5 (over/under 2.5)",
+  "teams": {
+    "home": "Norway",
+    "away": "England"
+  },
+  "ranLocally": true,
+  "mode": "qvac-registry"
+}
+
+wallet-balance:
+{
+  "usdt": 99.98,
+  "usdtRaw": "99980000",
+  "eth": 0.04981706011949862,
+  "ethRaw": "49817060119498620",
+  "usat": 0,
+  "xaut": 0,
+  "address": "0x64998cb8F2c9a6A9293c47c24Bf4535E003e57d3",
+  "network": "sepolia",
+  "tokenAddress": "0xd077A400968890Eacc75cdc901F0356c943e4fDb"
+}
+
+p2p-room:
+{
+  "matchName": "France-Morocco-QF",
+  "peers": 0,
+  "topic": "7176a8186ec2acd100e6022d511101934cb583a1a7a2ecb2c2711a3a2c288b48",
+  "peerId": "14e4b1d3-ba8f-4979-915d-4b0704ed876c",
+  "p2p": true,
+  "noServer": "Chat syncs over Hyperswarm P2P — this API only bootstraps the local peer."
+}
+
+matches QF:
+France vs Morocco, Spain vs Belgium, Norway vs England, Argentina vs Switzerland

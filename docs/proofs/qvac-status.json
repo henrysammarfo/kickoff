@@ -1,0 +1,17 @@
+{
+  "ready": true,
+  "mode": "qvac-registry",
+  "model": "LLAMA_3_2_1B_INST_Q4_0",
+  "modelId": "bd4db59fb4120b52",
+  "runningLocally": true,
+  "noCloudDependency": true,
+  "runtime": {
+    "configPath": "/workspace/qvac.config.json",
+    "model": {
+      "kind": "registry",
+      "modelKey": "LLAMA_3_2_1B_INST_Q4_0"
+    },
+    "cacheDirectory": "/home/ubuntu/.qvac/models",
+    "httpUrl": null
+  }
+}

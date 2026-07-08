@@ -1,0 +1,8 @@
+{
+  "matchName": "France-Morocco-QF",
+  "peers": 0,
+  "topic": "7176a8186ec2acd100e6022d511101934cb583a1a7a2ecb2c2711a3a2c288b48",
+  "peerId": "14e4b1d3-ba8f-4979-915d-4b0704ed876c",
+  "p2p": true,
+  "noServer": "Chat syncs over Hyperswarm P2P — this API only bootstraps the local peer."
+}

@@ -13,7 +13,8 @@
     "api:dev": "npm run dev --prefix api",
     "api:start": "npm run start --prefix api",
     "api:smoke": "npm run smoke --prefix api",
-    "api:stress": "npm run stress --prefix api"
+    "api:stress": "npm run stress --prefix api",
+    "api:proofs": "node scripts/capture-proofs.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

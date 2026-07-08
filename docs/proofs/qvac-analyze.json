@@ -1,0 +1,12 @@
+{
+  "raw": "[ANALYSIS] France's defensive wall holds strong, with Antoine Griezmann and Kylian Mbappé providing creative outlets, but Morocco's pace and skill offer few clear threats.\n[PREDICTION] France will dominate possession and create chances, but Morocco's counter-attacks will provide an outlet, potentially resulting in a Morocco goal in the 75th minute.\n[CONFIDENCE: 60%]",
+  "analysis": "France's defensive wall holds strong, with Antoine Griezmann and Kylian Mbappé providing creative outlets, but Morocco's pace and skill offer few clear threats.",
+  "prediction": "France will dominate possession and create chances, but Morocco's counter-attacks will provide an outlet, potentially resulting in a Morocco goal in the 75th minute.",
+  "confidence": 60,
+  "processingTimeMs": 2213,
+  "model": "LLAMA_3_2_1B_INST_Q4_0",
+  "ranLocally": true,
+  "mode": "qvac-registry",
+  "deviceInference": true,
+  "message": "Analysis generated locally — zero cloud, zero API calls"
+}
