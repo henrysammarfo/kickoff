@@ -58,7 +58,7 @@ function mergeLiveIntoCatalog(liveMatches, source, meta = {}) {
       ...merged[idx],
       score: live.score || merged[idx].score,
       minute: live.minute || merged[idx].minute,
-      status: status === "finished" ? "upcoming" : status,
+      status,
       homePossession:
         live.homePossession ?? merged[idx].homePossession,
       homeShots: live.homeShots ?? merged[idx].homeShots,
@@ -130,7 +130,10 @@ export class LiveMatchesService {
   async listMatches() {
     const data = await this.refresh();
     return {
-      matches: data.matches,
+      matches: data.matches.map((m) => ({
+        ...m,
+        roomKey: matchRoomKey(m.home, m.away, m.stage),
+      })),
       source: data.source,
       fetchedAt: data.fetchedAt,
       meta: data.meta,

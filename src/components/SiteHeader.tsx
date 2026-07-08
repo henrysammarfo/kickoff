@@ -5,8 +5,8 @@ import { LogoLockup } from "./brand/LogoLockup";
 
 const NAV = [
   { to: "/matches", label: "Matches" },
+  { to: "/dashboard", label: "Dashboard" },
   { to: "/how-it-works", label: "How it works" },
-  { to: "/merch", label: "Merch" },
   { to: "/manifesto", label: "Manifesto" },
 ];
 
@@ -56,6 +56,12 @@ export function SiteHeader() {
         </nav>
         <div className="flex shrink-0 items-center gap-2">
           <Link
+            to="/dashboard"
+            className="hidden rounded-full border border-white/20 px-4 py-2 text-xs font-medium text-white transition-colors hover:border-[#C6FF3D] hover:text-[#C6FF3D] sm:inline-flex"
+          >
+            Dashboard
+          </Link>
+          <Link
             to="/download"
             className="hidden rounded-full bg-white px-4 py-2 text-xs font-medium text-black transition-colors hover:bg-[#C6FF3D] sm:inline-flex"
           >
@@ -94,6 +100,13 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className="mt-auto flex flex-col gap-4">
+            <Link
+              to="/dashboard"
+              onClick={() => setOpen(false)}
+              className="rounded-full border border-white/20 px-6 py-4 text-center text-sm text-white"
+            >
+              Dashboard
+            </Link>
             <Link
               to="/download"
               onClick={() => setOpen(false)}

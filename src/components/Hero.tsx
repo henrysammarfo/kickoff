@@ -1,12 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useHealth, useLiveMatches } from "@/hooks/use-kickoff";
+import { partitionMatches } from "@/lib/match-live";
 
 export function Hero() {
   const { data: health } = useHealth();
   const { data: live } = useLiveMatches();
-  const liveCount = live?.matches?.filter((m) => m.status === "live").length ?? 0;
-  const nextLive = live?.matches?.find((m) => m.status === "live");
+  const { liveNow } = partitionMatches(live?.matches ?? []);
+  const liveCount = liveNow.length;
+  const nextLive = liveNow[0];
 
   const statusLabel =
     liveCount > 0
@@ -45,6 +47,12 @@ export function Hero() {
               className="font-mono text-[11px] uppercase tracking-[0.25em] text-white underline-offset-4 hover:underline"
             >
               How it works →
+            </Link>
+            <Link
+              to="/dashboard"
+              className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#C6FF3D] underline-offset-4 hover:underline"
+            >
+              Dashboard →
             </Link>
           </div>
         </div>

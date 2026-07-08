@@ -2,8 +2,9 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { ApiBanner } from "@/components/ApiBanner";
-import { getFixture } from "@/lib/fixtures";
+import { isLiveNow, liveSourceLabel } from "@/lib/match-live";
 import { matchRoomKey, truncateAddress } from "@/lib/api";
+import { getFixture } from "@/lib/fixtures";
 import {
   useAnalyzeMatch,
   useJoinRoom,
@@ -16,7 +17,6 @@ import {
   useCreatePool,
   useJoinPool,
   useLiveMatch,
-  useLiveDataStatus,
   useSettlePool,
 } from "@/hooks/use-kickoff";
 import { Cpu, Users, Trophy, Send, Sparkles, ArrowLeft, Loader2 } from "lucide-react";
@@ -36,13 +36,14 @@ export const Route = createFileRoute("/matches/$matchId")({
 
 function MatchRoom() {
   const { matchId } = useParams({ from: "/matches/$matchId" });
+  const { data: live, isLoading: liveLoading, isError: liveError } = useLiveMatch(matchId);
   const fallback = getFixture(matchId);
-  const { data: live } = useLiveMatch(matchId);
-  const { data: liveStatus } = useLiveDataStatus();
   const m = live?.match ?? fallback;
-  const roomName = m.roomKey ?? matchRoomKey(m.home, m.away, m.stage);
 
   const joinRoom = useJoinRoom();
+  const roomName = m
+    ? (m.roomKey ?? matchRoomKey(m.home, m.away, m.stage))
+    : null;
   const { data: messages } = useRoomMessages(roomName, joinRoom.isSuccess);
   const analyze = useAnalyzeMatch();
   const sendMsg = useSendMessage();
@@ -62,20 +63,47 @@ function MatchRoom() {
   const [settleAg, setSettleAg] = useState("1");
 
   useEffect(() => {
-    joinRoom.mutate(roomName);
+    if (roomName) joinRoom.mutate(roomName);
   }, [roomName]);
+
+  if (liveLoading && !m) {
+    return (
+      <PageShell>
+        <ApiBanner />
+        <p className="flex items-center gap-2 text-[#A0A0A0]">
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading match…
+        </p>
+      </PageShell>
+    );
+  }
+
+  if (!m) {
+    return (
+      <PageShell>
+        <ApiBanner />
+        <p className="text-white">Match not found.</p>
+        <Link to="/matches" className="mt-4 inline-block text-[#C6FF3D]">
+          ← All matches
+        </Link>
+      </PageShell>
+    );
+  }
 
   const matchPools = pools?.filter((p) => p.matchName.includes(m.home)) ?? [];
   const peers = joinRoom.data?.peers ?? 0;
   const dataSource = live?.source ?? "fixtures";
+  const showLive = isLiveNow(m);
 
   const runAnalysis = () => {
-    const [homeGoals, awayGoals] = m.score.split("-").map((s) => s.trim());
+    const scoreParts = m.score.includes("-")
+      ? m.score.split("-").map((s) => s.trim())
+      : ["0", "0"];
+    const [homeGoals, awayGoals] = scoreParts;
     analyze.mutate({
       homeTeam: m.home,
       awayTeam: m.away,
       score: `${homeGoals}-${awayGoals}`,
-      minute: m.minute.replace("'", "") || "0",
+      minute: m.minute.replace("'", "").replace("—", "") || "0",
       homePossession: m.homePossession,
       homeShots: m.homeShots,
       awayShots: m.awayShots,
@@ -97,31 +125,50 @@ function MatchRoom() {
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C6FF3D]">
             {m.stage} · {m.venue} · {m.kickoff}
-            {liveStatus?.tinyfishConfigured ? (
-              <span className="ml-2 text-[#A0A0A0]">
-                · live data ({dataSource})
-              </span>
-            ) : null}
+            <span className="ml-2 text-[#A0A0A0]">
+              · {liveSourceLabel(dataSource)}
+            </span>
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-4 md:gap-6">
             <span className="text-5xl md:text-6xl">{m.homeFlag}</span>
             <span className="font-display text-4xl text-white md:text-7xl">{m.home}</span>
-            <span className="font-mono text-2xl text-[#A0A0A0] md:text-3xl">{m.score}</span>
+            <span className="font-mono text-2xl text-[#A0A0A0] md:text-3xl">
+              {m.score !== "—" ? m.score : "vs"}
+            </span>
             <span className="font-display text-4xl text-white md:text-7xl">{m.away}</span>
             <span className="text-5xl md:text-6xl">{m.awayFlag}</span>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          {m.status === "live" && (
+          {showLive && (
             <span className="rounded-full bg-[#C6FF3D]/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-[#C6FF3D]">
               LIVE · {m.minute}
             </span>
           )}
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
-            <Users className="h-3 w-3" strokeWidth={1.5} /> {peers} peers · hyperswarm
+            <Users className="h-3 w-3" strokeWidth={1.5} />{" "}
+            {joinRoom.isPending
+              ? "joining room…"
+              : joinRoom.isError
+                ? "room offline — start API"
+                : `${peers} peer${peers === 1 ? "" : "s"} · hyperswarm`}
           </span>
         </div>
       </div>
+
+      {joinRoom.isSuccess && peers === 0 && (
+        <p className="mb-6 rounded-xl border border-[#C6FF3D]/20 bg-[#C6FF3D]/5 px-4 py-3 text-sm text-[#C6FF3D]">
+          You're first in this room — chat, AI, and USDt still work. Open an
+          incognito tab on this same URL for P2P demo.
+        </p>
+      )}
+
+      {liveError && !live && (
+        <p className="mb-6 text-sm text-amber-300">
+          Live API unavailable — showing catalog fixture. Start{" "}
+          <code className="text-amber-100">cd api && npm run dev</code>
+        </p>
+      )}
 
       <div className="mt-10 grid gap-6 lg:grid-cols-3">
         {/* Local AI */}

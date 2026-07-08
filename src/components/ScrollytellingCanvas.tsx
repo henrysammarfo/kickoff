@@ -184,7 +184,7 @@ export function ScrollytellingCanvas() {
   const progress = manifest && manifest.count > 0 ? Math.round((loadedCount / manifest.count) * 100) : 100;
 
   return (
-    <div ref={containerRef} className="fixed inset-0 z-0 bg-black" aria-hidden="true">
+    <div ref={containerRef} className="pointer-events-none fixed inset-0 z-0 bg-black" aria-hidden="true">
       <canvas ref={canvasRef} className="h-full w-full" />
       {!ready && manifest && manifest.count > 0 && (
         <div className="absolute inset-0 flex items-center justify-center">

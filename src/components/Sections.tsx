@@ -2,6 +2,7 @@ import { Cpu, Radio, Wallet, Trophy, WifiOff, Users } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
 import { Link } from "@tanstack/react-router";
 import { useHealth, useLiveMatches, useAiStatus, useWallet } from "@/hooks/use-kickoff";
+import { isLiveNow } from "@/lib/match-live";
 
 const Spacer = () => <div className="h-[120px] md:h-[200px]" aria-hidden="true" />;
 
@@ -92,7 +93,7 @@ export function Proof() {
   const { data: wallet } = useWallet();
 
   const matchCount = live?.matches?.length ?? 0;
-  const liveCount = live?.matches?.filter((m) => m.status === "live").length ?? 0;
+  const liveCount = live?.matches?.filter(isLiveNow).length ?? 0;
 
   const stats = [
     { k: "0", label: "central chat servers" },

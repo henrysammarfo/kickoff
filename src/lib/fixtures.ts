@@ -29,9 +29,9 @@ export const FIXTURES: Fixture[] = [
     stage: "R16",
     kickoff: "Jul 8 · 16:00 ET",
     venue: "Toronto",
-    status: "live",
-    score: "1 - 1",
-    minute: "67'",
+    status: "upcoming",
+    score: "—",
+    minute: "—",
     homePossession: 52,
     homeShots: 5,
     awayShots: 4,
@@ -46,9 +46,9 @@ export const FIXTURES: Fixture[] = [
     stage: "R16",
     kickoff: "Jul 8 · 20:00 ET",
     venue: "MetLife",
-    status: "live",
-    score: "2 - 1",
-    minute: "67'",
+    status: "upcoming",
+    score: "—",
+    minute: "—",
     homePossession: 65,
     homeShots: 8,
     awayShots: 3,
@@ -120,6 +120,6 @@ export const FIXTURES: Fixture[] = [
   },
 ];
 
-export function getFixture(id: string) {
-  return FIXTURES.find((f) => f.id === id) ?? FIXTURES[0];
+export function getFixture(id: string): Fixture | undefined {
+  return FIXTURES.find((f) => f.id === id);
 }
