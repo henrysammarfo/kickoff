@@ -14,8 +14,14 @@ import { Route as MatchesRouteImport } from './routes/matches'
 import { Route as ManifestoRouteImport } from './routes/manifesto'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as DownloadRouteImport } from './routes/download'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as MatchesMatchIdRouteImport } from './routes/matches.$matchId'
+import { Route as DashboardWalletRouteImport } from './routes/dashboard.wallet'
+import { Route as DashboardRoomsRouteImport } from './routes/dashboard.rooms'
+import { Route as DashboardPoolsRouteImport } from './routes/dashboard.pools'
+import { Route as DashboardAiRouteImport } from './routes/dashboard.ai'
 
 const MerchRoute = MerchRouteImport.update({
   id: '/merch',
@@ -42,25 +48,61 @@ const DownloadRoute = DownloadRouteImport.update({
   path: '/download',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const MatchesMatchIdRoute = MatchesMatchIdRouteImport.update({
   id: '/$matchId',
   path: '/$matchId',
   getParentRoute: () => MatchesRoute,
 } as any)
+const DashboardWalletRoute = DashboardWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardRoomsRoute = DashboardRoomsRouteImport.update({
+  id: '/rooms',
+  path: '/rooms',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardPoolsRoute = DashboardPoolsRouteImport.update({
+  id: '/pools',
+  path: '/pools',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAiRoute = DashboardAiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/download': typeof DownloadRoute
   '/how-it-works': typeof HowItWorksRoute
   '/manifesto': typeof ManifestoRoute
   '/matches': typeof MatchesRouteWithChildren
   '/merch': typeof MerchRoute
+  '/dashboard/ai': typeof DashboardAiRoute
+  '/dashboard/pools': typeof DashboardPoolsRoute
+  '/dashboard/rooms': typeof DashboardRoomsRoute
+  '/dashboard/wallet': typeof DashboardWalletRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,28 +111,45 @@ export interface FileRoutesByTo {
   '/manifesto': typeof ManifestoRoute
   '/matches': typeof MatchesRouteWithChildren
   '/merch': typeof MerchRoute
+  '/dashboard/ai': typeof DashboardAiRoute
+  '/dashboard/pools': typeof DashboardPoolsRoute
+  '/dashboard/rooms': typeof DashboardRoomsRoute
+  '/dashboard/wallet': typeof DashboardWalletRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/download': typeof DownloadRoute
   '/how-it-works': typeof HowItWorksRoute
   '/manifesto': typeof ManifestoRoute
   '/matches': typeof MatchesRouteWithChildren
   '/merch': typeof MerchRoute
+  '/dashboard/ai': typeof DashboardAiRoute
+  '/dashboard/pools': typeof DashboardPoolsRoute
+  '/dashboard/rooms': typeof DashboardRoomsRoute
+  '/dashboard/wallet': typeof DashboardWalletRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/download'
     | '/how-it-works'
     | '/manifesto'
     | '/matches'
     | '/merch'
+    | '/dashboard/ai'
+    | '/dashboard/pools'
+    | '/dashboard/rooms'
+    | '/dashboard/wallet'
     | '/matches/$matchId'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,20 +158,32 @@ export interface FileRouteTypes {
     | '/manifesto'
     | '/matches'
     | '/merch'
+    | '/dashboard/ai'
+    | '/dashboard/pools'
+    | '/dashboard/rooms'
+    | '/dashboard/wallet'
     | '/matches/$matchId'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
+    | '/dashboard'
     | '/download'
     | '/how-it-works'
     | '/manifesto'
     | '/matches'
     | '/merch'
+    | '/dashboard/ai'
+    | '/dashboard/pools'
+    | '/dashboard/rooms'
+    | '/dashboard/wallet'
     | '/matches/$matchId'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   DownloadRoute: typeof DownloadRoute
   HowItWorksRoute: typeof HowItWorksRoute
   ManifestoRoute: typeof ManifestoRoute
@@ -157,12 +228,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/matches/$matchId': {
       id: '/matches/$matchId'
@@ -171,8 +256,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MatchesMatchIdRouteImport
       parentRoute: typeof MatchesRoute
     }
+    '/dashboard/wallet': {
+      id: '/dashboard/wallet'
+      path: '/wallet'
+      fullPath: '/dashboard/wallet'
+      preLoaderRoute: typeof DashboardWalletRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/rooms': {
+      id: '/dashboard/rooms'
+      path: '/rooms'
+      fullPath: '/dashboard/rooms'
+      preLoaderRoute: typeof DashboardRoomsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/pools': {
+      id: '/dashboard/pools'
+      path: '/pools'
+      fullPath: '/dashboard/pools'
+      preLoaderRoute: typeof DashboardPoolsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/ai': {
+      id: '/dashboard/ai'
+      path: '/ai'
+      fullPath: '/dashboard/ai'
+      preLoaderRoute: typeof DashboardAiRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
+
+interface DashboardRouteChildren {
+  DashboardAiRoute: typeof DashboardAiRoute
+  DashboardPoolsRoute: typeof DashboardPoolsRoute
+  DashboardRoomsRoute: typeof DashboardRoomsRoute
+  DashboardWalletRoute: typeof DashboardWalletRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAiRoute: DashboardAiRoute,
+  DashboardPoolsRoute: DashboardPoolsRoute,
+  DashboardRoomsRoute: DashboardRoomsRoute,
+  DashboardWalletRoute: DashboardWalletRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
 
 interface MatchesRouteChildren {
   MatchesMatchIdRoute: typeof MatchesMatchIdRoute
@@ -187,6 +320,7 @@ const MatchesRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   DownloadRoute: DownloadRoute,
   HowItWorksRoute: HowItWorksRoute,
   ManifestoRoute: ManifestoRoute,
