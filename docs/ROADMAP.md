@@ -7,10 +7,10 @@ World Cup 2026 is the **launch event**. KICKOFF is built as a seasonal football 
 - [x] QVAC local match analysis
 - [x] Hyperswarm P2P fan rooms
 - [x] WDK tips + prediction pools (testnet)
-- [x] TinyFish live score ingestion
-- [x] Marketing site + dashboard
+- [x] TinyFish live score ingestion (optional)
+- [x] WC26 knockout catalog (R16 results + QF draw)
+- [x] Marketing site + responsive dashboard
 - [ ] Demo video (3 min)
-- [ ] Sepolia-funded wallet for live tx demo
 
 ## Phase 2 — Tournament mode (Jul–Aug 2026)
 

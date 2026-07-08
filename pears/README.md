@@ -6,8 +6,10 @@ Standalone **Pears Stack** proof — Hyperswarm P2P match rooms.
 
 ```bash
 npm install
-KICKOFF_MATCH=France-Paraguay-R16 node app.js
+KICKOFF_MATCH=France-Morocco-QF node app.js
 ```
+
+Other examples: `Norway-England-QF`, `France-Paraguay-R16` (finished recap room).
 
 ## Run (Pear CLI — judges)
 

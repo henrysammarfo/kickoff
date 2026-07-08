@@ -23,4 +23,8 @@ export default defineConfig({
       "@tanstack/react-query",
     ],
   },
+  server: {
+    port: 3002,
+    host: true,
+  },
 });

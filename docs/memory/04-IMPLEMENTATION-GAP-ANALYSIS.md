@@ -9,13 +9,14 @@
 |-------|--------|
 | Marketing frontend | ✅ Built + wired to API |
 | Local API (`api/`) | ✅ QVAC + Hyperswarm + WDK + pools |
-| Live data (TinyFish) | ✅ Implemented — needs `TINYFISH_API_KEY` for web pull |
-| Dashboard | ✅ All routes use live API hooks |
+| WC26 fixtures | ✅ 12-match catalog (R16 + QF) verified Jul 8 2026 |
+| Live data (TinyFish) | ✅ Implemented — optional `TINYFISH_API_KEY` |
+| Dashboard | ✅ Live API hooks + responsive layout |
 | Pear app | ✅ CLI + `index.html` shell + README |
 | Tests | ✅ `api:smoke` + `api:stress` |
 | LICENSE | ✅ MIT |
 | Demo video | ❌ User to record |
-| Sepolia wallet funded | ❌ User to faucet |
+| Sepolia wallet funded | ✅ Auto-detect USDT across testnet contracts |
 
 **Remaining for submission:** demo video + DoraHacks form + optional TinyFish key + testnet ETH.
 
