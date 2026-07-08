@@ -58,21 +58,44 @@ function DashboardLayout() {
       </aside>
 
       {/* Main */}
-      <div className="flex-1">
-        <header className="flex items-center justify-between border-b border-white/10 px-6 py-4 md:px-10">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#C6FF3D]/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-[#C6FF3D]">
+      <div className="min-w-0 flex-1">
+        <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-white/10 px-4 py-3 sm:px-6 md:px-10 md:py-4">
+          <div className="flex min-w-0 items-center gap-2 md:gap-3">
+            <Link to="/" className="shrink-0 md:hidden">
+              <LogoLockup size={18} />
+            </Link>
+            <span className="hidden shrink-0 items-center gap-1.5 rounded-full bg-[#C6FF3D]/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-[#C6FF3D] sm:inline-flex">
               <Circle className="h-1.5 w-1.5 fill-current" /> LIVE
             </span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#A0A0A0]">Canada 1 - 1 Morocco · 67'</span>
+            <span className="min-w-0 truncate font-mono text-[10px] uppercase tracking-[0.2em] text-[#A0A0A0] sm:text-[11px] sm:tracking-[0.25em]">
+              CAN 1-1 MAR · 67'
+            </span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="rounded-full border border-white/10 px-4 py-1.5 font-mono text-xs text-white">
-              {WALLET.balance.toFixed(2)} <span className="text-[#A0A0A0]">USDt</span>
-            </div>
+          <div className="shrink-0 rounded-full border border-white/10 px-3 py-1.5 font-mono text-xs text-white sm:px-4">
+            {WALLET.balance.toFixed(2)} <span className="text-[#A0A0A0]">USDt</span>
           </div>
         </header>
-        <main className="px-6 py-10 md:px-10 md:py-14">
+
+        {/* Mobile nav rail */}
+        <nav className="flex gap-1 overflow-x-auto border-b border-white/10 px-4 py-3 md:hidden">
+          {NAV.map((n) => {
+            const active = n.exact ? pathname === n.to : pathname.startsWith(n.to);
+            return (
+              <Link
+                key={n.to}
+                to={n.to}
+                className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-xs transition-colors ${
+                  active ? "bg-white/10 text-white" : "text-[#A0A0A0]"
+                }`}
+              >
+                <n.icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+                {n.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <main className="px-4 py-8 sm:px-6 sm:py-10 md:px-10 md:py-14">
           <Outlet />
         </main>
       </div>
