@@ -16,9 +16,26 @@ const WALLET_FILE = path.join(WALLET_DIR, "wallet.json");
 const DEFAULT_PROVIDER =
   process.env.WDK_EVM_PROVIDER || "https://ethereum-sepolia-rpc.publicnode.com";
 
-const USDT_TOKEN_ADDRESS =
-  process.env.WDK_USDT_TOKEN_ADDRESS ||
+const WDK_OFFICIAL_SEPOLIA_USDT =
   "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0";
+
+/** Known Sepolia test USDT contracts (many faucets mint different ERC-20s). */
+const SEPOLIA_USDT_CANDIDATES = [
+  process.env.WDK_USDT_TOKEN_ADDRESS,
+  WDK_OFFICIAL_SEPOLIA_USDT,
+  "0xd077A400968890Eacc75cdc901F0356c943e4fDb", // Crypto Chief / Etherscan "Tether USD"
+  "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06", // Common mintable test USDT
+].filter(Boolean);
+
+function uniqueTokenAddresses(addresses) {
+  const seen = new Set();
+  return addresses.filter((address) => {
+    const key = address.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 
 export class KickoffWallet {
   constructor() {
@@ -68,18 +85,43 @@ export class KickoffWallet {
     return this.account;
   }
 
+  async resolveUsdtToken() {
+    const preferred =
+      process.env.WDK_USDT_TOKEN_ADDRESS || WDK_OFFICIAL_SEPOLIA_USDT;
+    const candidates = uniqueTokenAddresses(SEPOLIA_USDT_CANDIDATES);
+
+    let best = { address: preferred, balance: 0n };
+
+    for (const tokenAddress of candidates) {
+      let balance = 0n;
+      try {
+        balance = await this.account.getTokenBalance(tokenAddress);
+      } catch {
+        continue;
+      }
+
+      if (balance > best.balance) {
+        best = { address: tokenAddress, balance };
+      }
+
+      if (
+        tokenAddress.toLowerCase() === preferred.toLowerCase() &&
+        balance > 0n
+      ) {
+        return { address: tokenAddress, balance };
+      }
+    }
+
+    return best;
+  }
+
   async getBalance() {
     if (!this.account) throw new Error("Wallet not initialized");
 
     const address = await this.account.getAddress();
     const ethBalance = await this.account.getBalance();
-
-    let usdt = 0n;
-    try {
-      usdt = await this.account.getTokenBalance(USDT_TOKEN_ADDRESS);
-    } catch {
-      /* token may not exist on this RPC */
-    }
+    const { address: tokenAddress, balance: usdt } =
+      await this.resolveUsdtToken();
 
     return {
       usdt: Number(usdt) / 1e6,
@@ -90,7 +132,7 @@ export class KickoffWallet {
       xaut: 0,
       address,
       network: this.network,
-      tokenAddress: USDT_TOKEN_ADDRESS,
+      tokenAddress,
     };
   }
 
