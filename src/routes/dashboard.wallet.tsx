@@ -27,6 +27,12 @@ function WalletPage() {
         <h1 className="mt-4 font-display text-5xl text-white md:text-6xl">
           Wallet
         </h1>
+        <p className="mt-3 max-w-xl text-sm text-[#A0A0A0]">
+          WDK generates a self-custodial wallet on this machine when the API
+          starts. Each install keeps its own seed in{" "}
+          <code className="text-white/80">~/.kickoff/wallet.json</code> — not
+          synced across browsers automatically.
+        </p>
       </div>
 
       {isError && (

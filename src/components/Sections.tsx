@@ -2,7 +2,7 @@ import { Cpu, Radio, Wallet, Trophy, WifiOff, Users } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
 import { Link } from "@tanstack/react-router";
 import { useHealth, useLiveMatches, useAiStatus, useWallet } from "@/hooks/use-kickoff";
-import { isLiveNow } from "@/lib/match-live";
+import { isLiveNow, partitionMatches } from "@/lib/match-live";
 
 const Spacer = () => <div className="h-[120px] md:h-[200px]" aria-hidden="true" />;
 
@@ -92,8 +92,8 @@ export function Proof() {
   const { data: ai } = useAiStatus();
   const { data: wallet } = useWallet();
 
-  const matchCount = live?.matches?.length ?? 0;
-  const liveCount = live?.matches?.filter(isLiveNow).length ?? 0;
+  const { liveNow, finished } = partitionMatches(live?.matches ?? []);
+  const liveCount = liveNow.length;
 
   const stats = [
     { k: "0", label: "central chat servers" },
@@ -106,8 +106,8 @@ export function Proof() {
       label: "USDt in wallet",
     },
     {
-      k: String(liveCount > 0 ? liveCount : matchCount),
-      label: liveCount > 0 ? "matches live now" : "wc26 fixtures",
+      k: String(finished.length),
+      label: "R16 finished",
     },
   ];
 

@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { ApiBanner } from "@/components/ApiBanner";
-import { isLiveNow, liveSourceLabel } from "@/lib/match-live";
+import { canJoinRoom, isFinished, isLiveNow, liveSourceLabel } from "@/lib/match-live";
 import { matchRoomKey, truncateAddress } from "@/lib/api";
 import { getFixture } from "@/lib/fixtures";
 import {
@@ -63,8 +63,9 @@ function MatchRoom() {
   const [settleAg, setSettleAg] = useState("1");
 
   useEffect(() => {
-    if (roomName) joinRoom.mutate(roomName);
-  }, [roomName]);
+    if (!roomName || !m || !canJoinRoom(m)) return;
+    joinRoom.mutate(roomName);
+  }, [roomName, m?.id, m?.status]);
 
   if (liveLoading && !m) {
     return (
@@ -93,6 +94,8 @@ function MatchRoom() {
   const peers = joinRoom.data?.peers ?? 0;
   const dataSource = live?.source ?? "fixtures";
   const showLive = isLiveNow(m);
+  const finished = isFinished(m);
+  const roomAllowed = canJoinRoom(m);
 
   const runAnalysis = () => {
     const scoreParts = m.score.includes("-")
@@ -145,21 +148,36 @@ function MatchRoom() {
               LIVE · {m.minute}
             </span>
           )}
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
-            <Users className="h-3 w-3" strokeWidth={1.5} />{" "}
-            {joinRoom.isPending
-              ? "joining room…"
-              : joinRoom.isError
-                ? "room offline — start API"
-                : `${peers} peer${peers === 1 ? "" : "s"} · hyperswarm`}
-          </span>
+          {finished && (
+            <span className="rounded-full bg-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
+              FINAL · {m.score}
+            </span>
+          )}
+          {roomAllowed && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-[#A0A0A0]">
+              <Users className="h-3 w-3" strokeWidth={1.5} />{" "}
+              {joinRoom.isPending
+                ? "creating room…"
+                : joinRoom.isError
+                  ? "start API to create room"
+                  : joinRoom.isSuccess
+                    ? `${peers} peer${peers === 1 ? "" : "s"} · hyperswarm`
+                    : "joining…"}
+            </span>
+          )}
         </div>
       </div>
 
-      {joinRoom.isSuccess && peers === 0 && (
+      {finished && (
+        <p className="mb-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-[#A0A0A0]">
+          Final whistle — room closed. Run local AI on the full-time result below.
+        </p>
+      )}
+
+      {roomAllowed && joinRoom.isSuccess && peers === 0 && (
         <p className="mb-6 rounded-xl border border-[#C6FF3D]/20 bg-[#C6FF3D]/5 px-4 py-3 text-sm text-[#C6FF3D]">
-          You're first in this room — chat, AI, and USDt still work. Open an
-          incognito tab on this same URL for P2P demo.
+          You created this room. Open an incognito tab on this URL so another fan
+          can join the same Hyperswarm topic.
         </p>
       )}
 
@@ -303,7 +321,8 @@ function MatchRoom() {
           </div>
         </div>
 
-        {/* P2P Chat */}
+        {/* P2P Chat — upcoming & live only */}
+        {roomAllowed && roomName ? (
         <div className="glass rounded-2xl p-6 lg:col-span-3">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-[#A0A0A0]">
@@ -399,6 +418,7 @@ function MatchRoom() {
             </div>
           )}
         </div>
+        ) : null}
       </div>
     </PageShell>
   );

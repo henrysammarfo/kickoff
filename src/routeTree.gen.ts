@@ -16,6 +16,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as DownloadRouteImport } from './routes/download'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MatchesIndexRouteImport } from './routes/matches.index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as MatchesMatchIdRouteImport } from './routes/matches.$matchId'
 import { Route as DashboardWalletRouteImport } from './routes/dashboard.wallet'
@@ -57,6 +58,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MatchesIndexRoute = MatchesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MatchesRoute,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
@@ -103,13 +109,13 @@ export interface FileRoutesByFullPath {
   '/dashboard/wallet': typeof DashboardWalletRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/matches/': typeof MatchesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/download': typeof DownloadRoute
   '/how-it-works': typeof HowItWorksRoute
   '/manifesto': typeof ManifestoRoute
-  '/matches': typeof MatchesRouteWithChildren
   '/merch': typeof MerchRoute
   '/dashboard/ai': typeof DashboardAiRoute
   '/dashboard/pools': typeof DashboardPoolsRoute
@@ -117,6 +123,7 @@ export interface FileRoutesByTo {
   '/dashboard/wallet': typeof DashboardWalletRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/matches': typeof MatchesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,6 +140,7 @@ export interface FileRoutesById {
   '/dashboard/wallet': typeof DashboardWalletRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/matches/': typeof MatchesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,13 +158,13 @@ export interface FileRouteTypes {
     | '/dashboard/wallet'
     | '/matches/$matchId'
     | '/dashboard/'
+    | '/matches/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/download'
     | '/how-it-works'
     | '/manifesto'
-    | '/matches'
     | '/merch'
     | '/dashboard/ai'
     | '/dashboard/pools'
@@ -164,6 +172,7 @@ export interface FileRouteTypes {
     | '/dashboard/wallet'
     | '/matches/$matchId'
     | '/dashboard'
+    | '/matches'
   id:
     | '__root__'
     | '/'
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/dashboard/wallet'
     | '/matches/$matchId'
     | '/dashboard/'
+    | '/matches/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -241,6 +251,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/matches/': {
+      id: '/matches/'
+      path: '/'
+      fullPath: '/matches/'
+      preLoaderRoute: typeof MatchesIndexRouteImport
+      parentRoute: typeof MatchesRoute
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -309,10 +326,12 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 
 interface MatchesRouteChildren {
   MatchesMatchIdRoute: typeof MatchesMatchIdRoute
+  MatchesIndexRoute: typeof MatchesIndexRoute
 }
 
 const MatchesRouteChildren: MatchesRouteChildren = {
   MatchesMatchIdRoute: MatchesMatchIdRoute,
+  MatchesIndexRoute: MatchesIndexRoute,
 }
 
 const MatchesRouteWithChildren =

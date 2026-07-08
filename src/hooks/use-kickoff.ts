@@ -5,8 +5,8 @@ export function useHealth() {
   return useQuery({
     queryKey: ["kickoff", "health"],
     queryFn: () => kickoffApi.health(),
-    refetchInterval: 15_000,
-    retry: 1,
+    refetchInterval: 30_000,
+    staleTime: 15_000,
   });
 }
 
@@ -14,8 +14,8 @@ export function useWallet() {
   return useQuery({
     queryKey: ["kickoff", "wallet"],
     queryFn: () => kickoffApi.walletBalance(),
-    refetchInterval: 10_000,
-    retry: 1,
+    refetchInterval: 60_000,
+    staleTime: 30_000,
   });
 }
 
@@ -23,8 +23,8 @@ export function useAiStatus() {
   return useQuery({
     queryKey: ["kickoff", "ai", "status"],
     queryFn: () => kickoffApi.aiStatus(),
-    refetchInterval: 10_000,
-    retry: 1,
+    staleTime: 60_000,
+    refetchInterval: 60_000,
   });
 }
 
@@ -35,8 +35,8 @@ export function usePools() {
       const res = await kickoffApi.listPools();
       return res.pools;
     },
-    refetchInterval: 8_000,
-    retry: 1,
+    staleTime: 15_000,
+    refetchInterval: 20_000,
   });
 }
 
@@ -45,8 +45,8 @@ export function useRoomMessages(matchName: string | null, enabled = true) {
     queryKey: ["kickoff", "room", matchName, "messages"],
     queryFn: () => kickoffApi.getRoomMessages(matchName!),
     enabled: Boolean(matchName) && enabled,
-    refetchInterval: 2_000,
-    retry: 1,
+    refetchInterval: 3_000,
+    staleTime: 1_000,
   });
 }
 
@@ -61,6 +61,7 @@ export function useJoinRoom() {
   return useMutation({
     mutationFn: (matchName: string) => kickoffApi.joinRoom(matchName),
     onSuccess: (_data, matchName) => {
+      qc.invalidateQueries({ queryKey: ["kickoff", "health"] });
       qc.invalidateQueries({ queryKey: ["kickoff", "room", matchName] });
     },
   });
@@ -158,17 +159,30 @@ export function useLiveMatches() {
   return useQuery({
     queryKey: ["kickoff", "matches", "live"],
     queryFn: () => kickoffApi.liveMatches(),
-    refetchInterval: 60_000,
-    retry: 1,
+    staleTime: 45_000,
+    refetchInterval: 90_000,
   });
 }
 
 export function useLiveMatch(matchId: string) {
+  const qc = useQueryClient();
   return useQuery({
     queryKey: ["kickoff", "matches", "live", matchId],
     queryFn: () => kickoffApi.liveMatch(matchId),
-    refetchInterval: 30_000,
-    retry: 1,
+    staleTime: 45_000,
+    refetchInterval: 90_000,
+    placeholderData: () => {
+      const list = qc.getQueryData<
+        Awaited<ReturnType<typeof kickoffApi.liveMatches>>
+      >(["kickoff", "matches", "live"]);
+      const m = list?.matches.find((x) => x.id === matchId);
+      if (!m) return undefined;
+      return {
+        match: m,
+        source: list!.source,
+        fetchedAt: list!.fetchedAt,
+      };
+    },
   });
 }
 
@@ -176,8 +190,8 @@ export function useLiveDataStatus() {
   return useQuery({
     queryKey: ["kickoff", "matches", "status"],
     queryFn: () => kickoffApi.liveMatchesStatus(),
-    refetchInterval: 30_000,
-    retry: 1,
+    staleTime: 60_000,
+    refetchInterval: 120_000,
   });
 }
 

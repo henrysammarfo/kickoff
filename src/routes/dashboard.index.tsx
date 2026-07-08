@@ -7,6 +7,7 @@ import {
   useAiStatus,
   useLiveMatches,
 } from "@/hooks/use-kickoff";
+import { partitionMatches } from "@/lib/match-live";
 import { ArrowUpRight, TrendingUp, Wallet, Radio, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/")({
@@ -21,7 +22,8 @@ function DashHome() {
   const { data: live } = useLiveMatches();
 
   const matches = live?.matches ?? [];
-  const liveCount = matches.filter((f) => f.status === "live").length;
+  const { liveNow } = partitionMatches(matches);
+  const liveCount = liveNow.length;
   const openPools = pools?.filter((p) => p.status === "open").length ?? 0;
 
   return (

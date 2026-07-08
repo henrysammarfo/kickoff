@@ -15,14 +15,33 @@ export function isLiveNow(m: LiveMatch): boolean {
   return m.status === "live" && isIngestedLive(m);
 }
 
+export function isFinished(m: LiveMatch): boolean {
+  return m.status === "finished";
+}
+
+/** P2P rooms open for upcoming + ingested-live — not for completed ties. */
+export function canJoinRoom(m: LiveMatch): boolean {
+  return m.status === "upcoming" || isLiveNow(m);
+}
+
 export function partitionMatches(matches: LiveMatch[]) {
   const liveNow = matches.filter(isLiveNow);
-  const upcoming = matches.filter((m) => !isLiveNow(m));
-  return { liveNow, upcoming };
+  const finished = matches.filter(isFinished);
+  const upcoming = matches.filter(
+    (m) => m.status === "upcoming" && !isLiveNow(m),
+  );
+  return { liveNow, finished, upcoming };
 }
 
 export function liveSourceLabel(source?: string): string {
   if (!source || source === "fixtures") return "WC26 catalog";
-  if (source.includes("empty") || source.includes("error")) return "live fetch pending";
+  if (source.includes("empty") || source.includes("error"))
+    return "live fetch pending";
   return source.replace("tinyfish-", "TinyFish · ");
+}
+
+export function matchActionLabel(m: LiveMatch): string {
+  if (isFinished(m)) return "View recap";
+  if (isLiveNow(m)) return "Join live room";
+  return "Create / join room";
 }

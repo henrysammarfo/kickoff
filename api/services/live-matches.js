@@ -48,11 +48,13 @@ function mergeLiveIntoCatalog(liveMatches, source, meta = {}) {
     if (idx < 0) continue;
 
     const status =
-      live.status === "live" || live.status === "halftime"
-        ? "live"
-        : live.status === "finished"
-          ? "finished"
-          : merged[idx].status;
+      merged[idx].status === "finished"
+        ? "finished"
+        : live.status === "live" || live.status === "halftime"
+          ? "live"
+          : live.status === "finished"
+            ? "finished"
+            : merged[idx].status;
 
     merged[idx] = {
       ...merged[idx],
@@ -142,8 +144,10 @@ export class LiveMatchesService {
 
   async getMatch(id) {
     const data = await this.refresh();
-    const match =
-      data.matches.find((m) => m.id === id) ?? getCatalogFixture(id);
+    const match = data.matches.find((m) => m.id === id) ?? getCatalogFixture(id);
+    if (!match) {
+      return { match: null, source: data.source, fetchedAt: data.fetchedAt };
+    }
     return {
       match: {
         ...match,

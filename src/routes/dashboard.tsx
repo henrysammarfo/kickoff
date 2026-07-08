@@ -2,9 +2,9 @@ import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-r
 import { LayoutDashboard, Wallet, Radio, Trophy, Cpu, Circle } from "lucide-react";
 import { LogoLockup } from "@/components/brand/LogoLockup";
 import { ApiBanner } from "@/components/ApiBanner";
-import { useHealth, useWallet } from "@/hooks/use-kickoff";
+import { useHealth, useWallet, useLiveMatches } from "@/hooks/use-kickoff";
 import { truncateAddress } from "@/lib/api";
-import { FIXTURES } from "@/lib/fixtures";
+import { partitionMatches } from "@/lib/match-live";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -32,11 +32,14 @@ function DashboardLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { data: wallet, isLoading: walletLoading } = useWallet();
   const { data: health } = useHealth();
-
-  const liveFixture = FIXTURES.find((f) => f.status === "live");
-  const headerScore = liveFixture
-    ? `${liveFixture.home.slice(0, 3).toUpperCase()} ${liveFixture.score.replace(/\s/g, "")} ${liveFixture.away.slice(0, 3).toUpperCase()} · ${liveFixture.minute}`
-    : "API connected · local stack";
+  const { data: live } = useLiveMatches();
+  const { upcoming } = partitionMatches(live?.matches ?? []);
+  const nextFixture = upcoming[0];
+  const headerScore = nextFixture
+    ? `Next QF · ${nextFixture.home} vs ${nextFixture.away}`
+    : health?.status === "ok"
+      ? "API connected · local stack"
+      : "Start API — cd api && npm run dev";
 
   return (
     <div className="flex min-h-screen bg-black text-white">

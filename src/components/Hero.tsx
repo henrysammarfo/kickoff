@@ -18,7 +18,7 @@ export function Hero() {
         : "World Cup 2026";
 
   return (
-    <section className="relative grid min-h-screen grid-cols-4 gap-6 px-6 pb-16 pt-32 md:grid-cols-12 md:px-12 md:pb-24">
+    <section className="relative grid min-h-screen grid-cols-4 gap-6 px-6 pb-16 pt-8 md:grid-cols-12 md:px-12 md:pb-24">
       <div className="col-span-4 flex items-end md:col-span-8 lg:col-span-7">
         <div>
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.3em] text-[#A0A0A0]">
@@ -47,12 +47,6 @@ export function Hero() {
               className="font-mono text-[11px] uppercase tracking-[0.25em] text-white underline-offset-4 hover:underline"
             >
               How it works →
-            </Link>
-            <Link
-              to="/dashboard"
-              className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#C6FF3D] underline-offset-4 hover:underline"
-            >
-              Dashboard →
             </Link>
           </div>
         </div>

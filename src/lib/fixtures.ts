@@ -1,4 +1,4 @@
-/** WC26 fixture catalog — offline fallback; live stats from GET /api/matches/live */
+/** WC26 fixture catalog — offline fallback when API is down; keep in sync with api/data/fixtures-catalog.js */
 
 export type Fixture = {
   id: string;
@@ -9,14 +9,14 @@ export type Fixture = {
   stage: string;
   kickoff: string;
   venue: string;
-  status: "live" | "upcoming";
+  status: "live" | "upcoming" | "finished";
   score: string;
   minute: string;
-  /** Default possession / shots for live analysis form */
   homePossession: number;
   homeShots: number;
   awayShots: number;
   recentEvents?: string[];
+  roomKey?: string;
 };
 
 export const FIXTURES: Fixture[] = [
@@ -27,15 +27,15 @@ export const FIXTURES: Fixture[] = [
     homeFlag: "🇨🇦",
     awayFlag: "🇲🇦",
     stage: "R16",
-    kickoff: "Jul 8 · 16:00 ET",
+    kickoff: "Jul 5 · 16:00 ET",
     venue: "Toronto",
-    status: "upcoming",
-    score: "—",
-    minute: "—",
-    homePossession: 52,
-    homeShots: 5,
-    awayShots: 4,
-    recentEvents: ["Yellow card 58'", "Substitution 61'"],
+    status: "finished",
+    score: "0 - 2",
+    minute: "FT",
+    homePossession: 48,
+    homeShots: 6,
+    awayShots: 9,
+    recentEvents: ["Goal 23'", "Goal 78'"],
   },
   {
     id: "fra-par",
@@ -44,15 +44,15 @@ export const FIXTURES: Fixture[] = [
     homeFlag: "🇫🇷",
     awayFlag: "🇵🇾",
     stage: "R16",
-    kickoff: "Jul 8 · 20:00 ET",
+    kickoff: "Jul 6 · 20:00 ET",
     venue: "MetLife",
-    status: "upcoming",
-    score: "—",
-    minute: "—",
-    homePossession: 65,
-    homeShots: 8,
-    awayShots: 3,
-    recentEvents: ["Goal 34'", "Yellow card 62'"],
+    status: "finished",
+    score: "2 - 1",
+    minute: "FT",
+    homePossession: 61,
+    homeShots: 14,
+    awayShots: 7,
+    recentEvents: ["Goal 34'", "Goal 71'", "Goal 88'"],
   },
   {
     id: "bra-eng",
@@ -62,9 +62,9 @@ export const FIXTURES: Fixture[] = [
     awayFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
     stage: "QF",
     kickoff: "Jul 11 · 15:00 ET",
-    venue: "AT&T",
+    venue: "AT&T Stadium",
     status: "upcoming",
-    score: "0 - 0",
+    score: "—",
     minute: "—",
     homePossession: 50,
     homeShots: 0,
@@ -78,9 +78,9 @@ export const FIXTURES: Fixture[] = [
     awayFlag: "🇩🇪",
     stage: "QF",
     kickoff: "Jul 11 · 20:00 ET",
-    venue: "SoFi",
+    venue: "SoFi Stadium",
     status: "upcoming",
-    score: "0 - 0",
+    score: "—",
     minute: "—",
     homePossession: 50,
     homeShots: 0,
@@ -94,9 +94,9 @@ export const FIXTURES: Fixture[] = [
     awayFlag: "🇳🇱",
     stage: "QF",
     kickoff: "Jul 12 · 15:00 ET",
-    venue: "Lumen",
+    venue: "Lumen Field",
     status: "upcoming",
-    score: "0 - 0",
+    score: "—",
     minute: "—",
     homePossession: 50,
     homeShots: 0,
@@ -110,9 +110,9 @@ export const FIXTURES: Fixture[] = [
     awayFlag: "🇺🇸",
     stage: "QF",
     kickoff: "Jul 12 · 20:00 ET",
-    venue: "MetLife",
+    venue: "MetLife Stadium",
     status: "upcoming",
-    score: "0 - 0",
+    score: "—",
     minute: "—",
     homePossession: 50,
     homeShots: 0,
